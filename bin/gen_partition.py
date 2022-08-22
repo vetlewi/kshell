@@ -1,45 +1,40 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
+#
 # ./gen_partition.py hoge.snt hoge.ptn
 # generate partition file from snt file
 # usage: gen_partiton.py hoge.snt #proton #neutron parity
 #
 
-import sys, operator, random, os.path
-from functools import reduce
+# 2to3
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
+from functools  import reduce
+from builtins   import input
+
+import sys, operator, random
+
+
+
+
 
 output_ans = ""
-
-def raw_input_save(comment: str = "") -> str:
-    """
-    Fetch user input from 'input' and append it to 'output_ans'.
-
-    Parameters
-    ----------
-    comment : str
-        Comment displayed on screen when user is prompted for input.
-
-    Returns
-    -------
-    ans : str
-        Input from user.
-    """
-    # if c is None: r = input()
-    # else: r = input(c)
-    ans = input(comment)
+def raw_input_save( c=None ):
+    if c is None: r = input()
+    else: r = input(c)
     global output_ans
-    output_ans += ans + '\n'
-    return ans
+    output_ans += r + '\n'
+    return r
+
+
+
 
 def read_comment_skip(fp):
-    """
-    NOTE: This can probably be replaced by 'read_comment_skip' in 
-    'kshell_ui'.
-    """
     while True:
         arr = fp.readline().split()
         if not arr: return None
         for i in range(len(arr)): 
-            if (arr[i][0] == "!") or (arr[i][0] == "#"): 
+            if arr[i][0]=="!" or arr[i][0]=="#": 
                 arr = arr[:i]
                 break
         if not arr: continue
@@ -51,16 +46,16 @@ def read_comment_skip(fp):
             except ValueError:
                 return arr
 
-def orb2char(n, l, j, tz):
-    lorb2c = [
-        's', 'p', 'd', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'
-    ]
+def orb2char(n,l,j,tz):
+    lorb2c = ['s', 'p', 'd', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 
+              'm', 'n', 'o']
     tz2c = { -1:'p', 1:'n' }
     return "%c_%d%c%d/2" % (tz2c[tz], n, lorb2c[l], j)
 
+
 class ModelSpace:
-    def __init__(self, valence_p_n, norb, lorb, jorb, itorb):
-        self.nferm = valence_p_n
+    def __init__(self, nf, norb, lorb, jorb, itorb):
+        self.nferm = nf
         self.norb = norb
         self.lorb = lorb
         self.jorb = jorb
@@ -113,7 +108,7 @@ class ModelSpace:
         if is_hw_exct:
             self.minhw += sum(lowest_pn)
             self.maxhw += sum(lowest_pn)
-            print("lowest hw, maxhw ", self.minhw, self.maxhw)
+            print( "lowest hw, maxhw ", self.minhw, self.maxhw)
         self.maxhw_pn = ( min(self.maxhw - lowest_pn[1], highest_pn[0]) , 
                           min(self.maxhw - lowest_pn[0], highest_pn[1]) )
         self.minhw_pn = ( max(self.minhw - highest_pn[1], lowest_pn[0]) , 
@@ -154,12 +149,13 @@ class ModelSpace:
         #           max( self.phtrunc_t[i][0] - highest_pn[i][0], 
         #                lowest_pn[i][1] ) ) )
 
-    def set_monopole_truncation(self, model_space_filename, thd_energy):
+    def set_monopole_truncation(self, fn_snt, thd_energy):
         self.is_monopole_trunc = True
         from espe import SMInt
-        self.SMInt = SMInt(model_space_filename)
+        self.SMInt = SMInt(fn_snt)
         self.monopole_e_thd = thd_energy
 
+        
     def gen_ptn_pn(self):
         nocc_orb_pn = [ [ j+1 for j,t in zip(self.jorb, self.itorb) 
                           if t==-1], 
@@ -167,8 +163,8 @@ class ModelSpace:
                           if t== 1] ]
         self.ptn_pn = [[], []]
 
-        def gen_hw_nocc(orb_hw, hwnocc):
-            if self.nferm==0: 
+        def gen_hw_nocc(orb_hw, hwnocc, nf=None):
+            if nf == 0:
                 yield (0,)*sum([len(i) for i in orb_hw])
                 return
             if len(orb_hw)==1:
@@ -209,16 +205,17 @@ class ModelSpace:
                 return True
 
             for hwnocc in hw_nocc:
-                for arr in gen_hw_nocc(orb_hw, hwnocc):
+                for arr in gen_hw_nocc(orb_hw, hwnocc, self.nferm[tz]):
                     if check_trunc_pn( arr ):
                         self.ptn_pn[tz].append( arr )
             self.ptn_pn[tz].sort()
 
-    def ptn_combined(self, parity):
+
+    def ptn_combined(self, nparity):
         # parity
         self.ptn_pn_parity = [
             [ reduce(operator.mul, 
-                     [ p**n for p,n in zip(self.iporb_pn[tz], arr) ])
+                     [ p**n for p,n in zip(self.iporb_pn[tz], arr) ] + [1] )
               for arr in self.ptn_pn[tz] ]
             for tz in range(2) ]
         # hw 
@@ -250,7 +247,7 @@ class ModelSpace:
         def check_trunc(i_p, i_n):
             # parity
             if self.ptn_pn_parity[0][i_p] * self.ptn_pn_parity[1][i_n] \
-               != parity: return False
+               != nparity: return False
             # hw excitation
             hw = self.ptn_pn_hw[0][i_p] + self.ptn_pn_hw[1][i_n]
             if not self.minhw <= hw <= self.maxhw: return False
@@ -276,10 +273,10 @@ class ModelSpace:
             for (i,j), e in zip(ptn_list, elist):
                 nocc = self.ptn_pn[0][i] + self.ptn_pn[1][j]
                 if e > self.monopole_e_thd:
-                    print('SKIP partition', nocc, ' : %10.5f' % e)
+                    print( 'SKIP partition', nocc, ' : %10.5f' % e )
                 else:
                     self.ptn_list.append( (i,j) )
-                    print('PASS partition', nocc, ' : %10.5f' % e)
+                    print( 'PASS partition', nocc, ' : %10.5f' % e )
             return
                 
         
@@ -288,6 +285,7 @@ class ModelSpace:
                           for i in range(len(self.ptn_pn[0]))
                           for j in range(len(self.ptn_pn[1]))
                           if check_trunc(i, j) ]
+
 
     def strip_ptn_pn(self):
         is_ptn_pn = [ [False,]*len(self.ptn_pn[0]),  
@@ -314,11 +312,14 @@ class ModelSpace:
             ptn_list.append( (ni, nj) )
         self.ptn_list = ptn_list
                                   
-    def write_ptn_pn(self, fp, parity, model_space_filename):
+
+        
+
+    def write_ptn_pn(self, fp, nparity, fn_snt):
         # output partition of proton and neutron separately
         fp.write( "# partition file of %s  Z=%d  N=%d  parity=%+d\n" 
-                  % (model_space_filename, self.nferm[0], self.nferm[1], parity ) )
-        fp.write( " %d %d %d\n" % (self.nferm[0], self.nferm[1], parity) )
+                  % (fn_snt, self.nferm[0], self.nferm[1], nparity ) )
+        fp.write( " %d %d %d\n" % (self.nferm[0], self.nferm[1], nparity) )
         fp.write( "# num. of  proton partition, neutron partition\n" )
         fp.write( " %d %d\n" % (len(self.ptn_pn[0]), len(self.ptn_pn[1]) ))
         for tz in range(2):
@@ -343,17 +344,18 @@ class ModelSpace:
         if len(self.ptn_list)==0: 
             sys.stdout.write( "\n *** WARNING NO PARTITION *** \n" )
 
-    def cal_hw_low_high_pn(self, valence_p_n):
+
+    def cal_hw_low_high_pn(self, nf):
         # total hw excitation of the lowest and highest configuration
         nhw = [ [], [] ]
         for tz in range(2):
             for i in range(len(self.jorb_pn[tz])):
                 nhw[tz] += [ self.hworb_pn[tz][i], ]*(self.jorb_pn[tz][i]+1) 
         for tz in range(2): nhw[tz].sort()
-        return ( sum(nhw[0][:valence_p_n[0]]), sum(nhw[1][:valence_p_n[1]]) ), \
-            ( sum(nhw[0][-valence_p_n[0]:]), sum(nhw[1][-valence_p_n[1]:]) )
+        return ( sum(nhw[0][:nf[0]]), sum(nhw[1][:nf[1]]) ), \
+            ( sum(nhw[0][-nf[0]:]), sum(nhw[1][-nf[1]:]) )
 
-    def cal_phtrunc_t_low_high_pn(self, valence_p_n):
+    def cal_phtrunc_t_low_high_pn(self, nf):
         lowest_pn = []
         highest_pn = []
         for mask_pn in self.phtrunc_mask_pn:
@@ -362,54 +364,32 @@ class ModelSpace:
                 for i in range(len(self.jorb_pn[tz])):
                     nhw[tz] += [ mask_pn[tz][i], ]*(self.jorb_pn[tz][i]+1) 
             for tz in range(2): nhw[tz].sort()
-            lowest_pn.append((sum(nhw[0][:valence_p_n[0]]),sum(nhw[1][:valence_p_n[1]])))
-            highest_pn.append((sum(nhw[0][-valence_p_n[0]:]),sum(nhw[1][-valence_p_n[1]:])))
+            lowest_pn.append((sum(nhw[0][:nf[0]]),sum(nhw[1][:nf[1]])))
+            highest_pn.append((sum(nhw[0][-nf[0]:]),sum(nhw[1][-nf[1]:])))
         return lowest_pn, highest_pn
 
-    def gen_nocc(self, nlist, valence_p_n):
-        if valence_p_n==0: 
+
+    def gen_nocc(self, nlist, nf):
+        if nf==0: 
             yield (0,)*len(nlist)
             return
         if len(nlist)==1:
-            yield (valence_p_n,)
+            yield (nf,)
             return
         ns, nrest = nlist[0], nlist[1:]
-        # for i in range(max(0, valence_p_n-sum(nrest)), min(ns, valence_p_n)+1): 
-        for i in range(min(ns, valence_p_n), max(0, valence_p_n-sum(nrest))-1, -1): 
-            for j in self.gen_nocc(nrest, valence_p_n-i):
+        # for i in range(max(0, nf-sum(nrest)), min(ns, nf)+1): 
+        for i in range(min(ns, nf), max(0, nf-sum(nrest))-1, -1): 
+            for j in self.gen_nocc(nrest, nf-i):
                 yield (i,) + j
 
-def main(
-    model_space_filename: str,
-    partition_filename: str,
-    valence_p_n: tuple,
-    parity: int
-    ):
-    """
-    Parameters
-    ----------
-    model_space_filename:
-        The filename of the model space (.snt) file.
 
-    partition_filename:
-        The filename of the partition (.ptn) file.
 
-    valence_p_n:
-        Tuple containing the number of valence protons and neutrons.
-        Example: (#p, #n).
+def main(fn_snt, fn_ptn, nf, nparity):
     
-    parity:
-        The parity of the current partition.
-    """
-    
-    try:
-        fp = open(model_space_filename, 'r')
-    except FileNotFoundError:
-        print(f"File '{model_space_filename=}' not found")
-        sys.exit()
+    fp = open(fn_snt, 'r')
     
     n_jorb, n_core = [0,0], [0,0]
-    n_jorb[0], n_jorb[1], n_core[0], n_core[1] = read_comment_skip(fp)
+    n_jorb[0], n_jorb[1], n_core[0], n_core[1]  = read_comment_skip(fp)
     norb, lorb, jorb, itorb = [], [], [], []
     for i in range(sum(n_jorb)):
         arr = read_comment_skip(fp)
@@ -432,46 +412,48 @@ def main(
 
     
     
-    class_ms = ModelSpace( valence_p_n, norb, lorb, jorb, itorb )
+    class_ms = ModelSpace( nf, norb, lorb, jorb, itorb )
 
     # parity check
     prty_list = [ set(ip) for ip in class_ms.iporb_pn ]
     for i in range(2): 
-        if valence_p_n[i] % 2 == 0 and prty_list[i] == set([-1]): 
+        if nf[i] % 2 == 0 and prty_list[i] == set([-1]): 
             prty_list[i] = set( [1] )
-        if valence_p_n[i] == 0: prty_list[i] = set( [1] )
+        if nf[i] == 0: prty_list[i] = set( [1] )
 
-    if parity == 1:
+    if nparity == 1:
         if not (1 in prty_list[0] and 1 in prty_list[1] ) \
                 and not (-1 in prty_list[0] and -1 in prty_list[1] ):
-            print("No states in  positive parity")
+            print( "No states in  positive parity" )
             return
             # sys.exit()
-    elif parity == -1:
+    elif nparity == -1:
         if not (1 in prty_list[0] and -1 in prty_list[1] ) \
                 and not (-1 in prty_list[0] and 1 in prty_list[1] ):
-            print("No states in negative parity")
+            print( "No states in negative parity" )
             return
             # sys.exit()
     else:
         raise "illegal input"
 
-    fpout = open(partition_filename, 'w')
+    fpout = open(fn_ptn, 'w')
 
     print(" truncation scheme ?\n" \
         + "      0 : No truncation (default) \n" \
         + "      1 : particle-hole truncation for orbit(s) \n" \
         + "      2 : hw truncation \n" \
-        + "      3 : Both (1) and (2) \n")
+        + "      3 : Both (1) and (2) \n" \
+        + "      4 : Monopole-based partition truncation ",)
+    # No.4 for monopole truncation
 
     ans = raw_input_save()
     ans = ans.rstrip()
     if not ans: ans = 0
-    truncation_mode = int(ans)
+    tmod = int(ans)
 
-    if not 0 <= truncation_mode <= 4: raise 'input out of range'
+    if not 0 <= tmod <= 4: raise 'input out of range'
 
-    if (truncation_mode == 2) or (truncation_mode == 3): 
+    if tmod == 2 or tmod == 3: 
         def ask_max_hw():
             ans = raw_input_save( " (min. and) max hw for excitation : " )
             ans = ans.replace(',', ' ').split()
@@ -480,33 +462,18 @@ def main(
         ans = ask_max_hw()
         if len(ans)==1: ans = [0, ans[0]]
         class_ms.set_hw_truncation(ans)
-        fpout.write("# hw trucnation,  min hw = "+str(ans[0]) 
+        fpout.write("# hw truncation,  min hw = "+str(ans[0]) 
                     +" ,   max hw = "+str(ans[1])+"\n")
 
-    if (truncation_mode == 1) or (truncation_mode == 3):
-        print("   #    n   l   j   tz    spe ")
+    if tmod == 1 or tmod == 3:
+        print( "   #    n,  l,  j, tz,    spe " )
         for i in range(len(norb)):
-            """
-            Print the properties of the available valence orbitals.
-
-            Example:
-            #    n   l   j   tz    spe
-            1    0   2   3  -1     1.980     p_0d3/2
-            2    0   2   5  -1    -3.944     p_0d5/2
-            3    1   0   1  -1    -3.061     p_1s1/2
-            4    0   2   3   1     1.980     n_0d3/2
-            5    0   2   5   1    -3.944     n_0d5/2
-            6    1   0   1   1    -3.061     n_1s1/2
-            """
             n, l, j, tz = norb[i], lorb[i], jorb[i], itorb[i],
-            # print(" %3d  %3d %3d %3d %3d %9.3f     %s" \
-            #     % ( i+1, n, l, j, tz, spe[i], orb2char(n, l, j, tz) ))
-            msg = f" {i + 1:3d}  {n:3d} {l:3d} {j:3d} {tz:3d} {spe[i]:9.3f}"
-            msg += f"     {orb2char(n, l, j, tz)}"
-            print(msg)
-        
-        print(' specify # of orbit(s) and min., max. occupation numbers ' \
-            + 'for restriction')
+            print( " %3d  %3d %3d %3d %3d %9.3f     %s" \
+                % ( i+1, n, l, j, tz, spe[i], orb2char(n, l, j, tz) ) )
+            pass
+        print( ' specify # of orbit(s) and min., max. occupation numbers ' \
+               + 'for restriction' )
         orb_list, t_list = [], []
         while True:
             ans = raw_input_save(
@@ -522,24 +489,24 @@ def main(
             if len(ans) != 2: raise 'read error'
             t_list.append( [int(i) for i in ans] )
 
-        if truncation_mode==1 and len(orb_list)>0:
+        if tmod==1 and len(orb_list)>0:
             # class_ms.set_ph_truncation(orb_list[:], t_list[:])
             class_ms.set_hw_for_phtrunc(orb_list[0], t_list[0])
             if len(orb_list)>1:
                class_ms.set_ph_truncation(orb_list[1:], t_list[1:])
-        else: # truncation_mode == 3
+        else: # tmod == 3
             class_ms.set_ph_truncation(orb_list, t_list)
         fpout.write("# particle-hole truncation orbit(s) : min., max.\n")
         for orb,t in zip(orb_list, t_list):
             fpout.write("#      " + str([i+1 for i in orb]) + " :  " + \
                             str(t[0]) + " " + str(t[1]) + "\n")
-    if truncation_mode == 4:
+    if tmod == 4:
         ans = raw_input_save(
             " monopole trunc, threashold energy (relative to min): " )
         thd = float(ans)
         fpout.write( "# monopole-based partition truncation, thd= %10.5f\n"
                      %  thd)
-        class_ms.set_monopole_truncation(model_space_filename, thd)
+        class_ms.set_monopole_truncation(fn_snt, thd)
 
     sys.stdout.write( "generating partition file ..." )
     sys.stdout.flush()
@@ -550,7 +517,7 @@ def main(
     if class_ms.is_monopole_trunc:     sys.stdout.write( "\n" )
     sys.stdout.flush()
 
-    class_ms.ptn_combined(parity)
+    class_ms.ptn_combined(nparity)
 
     sys.stdout.write( "..." )
     sys.stdout.flush()
@@ -560,13 +527,13 @@ def main(
     sys.stdout.write( "..." )
     sys.stdout.flush()
 
-    class_ms.write_ptn_pn(fpout, parity, model_space_filename)
+    class_ms.write_ptn_pn(fpout, nparity, fn_snt)
     class_ms.write_ptn_combined(fpout)
 
     sys.stdout.write( " done.\n" )
     if class_ms.is_monopole_trunc:
-        print('\nminimum energy for partition %10.5f, threashold %10.5f\n'\
-            % (class_ms.min_eocc, class_ms.monopole_e_thd))
+        print( '\nminimum energy for partition %10.5f, threashold %10.5f\n'\
+               % (class_ms.min_eocc, class_ms.monopole_e_thd) )
 
     fpout.close()
 
@@ -576,23 +543,27 @@ def main(
         ret = [i+1 for i in orb_list[0]] 
     return ret
 
+
+    
+
 if __name__ == "__main__":
 
     if len(sys.argv)<3: 
-        print('usage: gen_partiton.py hoge.snt ' \
-            + 'output.ptn #proton #neutron parity')
+        print( 'usage: gen_partiton.py hoge.snt ' \
+            + 'output.ptn #proton #neutron parity' )
         sys.exit(1)
 
+    import os.path
     if os.path.exists(sys.argv[2]): raise "partition file exists"
 
-    model_space_filename, fn_out = sys.argv[1], sys.argv[2]
-    valence_p_n = (int(sys.argv[3]), int(sys.argv[4]))
-    parity = 1
-    if len(sys.argv) > 5: 
-        if   sys.argv[5] == "+": parity =  1
-        elif sys.argv[5] == "-": parity = -1
-        else: parity = int(sys.argv[5])
+    fn_snt, fn_out = sys.argv[1], sys.argv[2]
+    nf = (int(sys.argv[3]), int(sys.argv[4]))
+    nparity = 1
+    if len(sys.argv)>5: 
+        if   sys.argv[5]=="+": nparity =  1
+        elif sys.argv[5]=="-": nparity = -1
+        else: nparity = int(sys.argv[5])
 
-    if not parity in (1, -1): raise "parity error"
+    if not nparity in (1, -1): raise "parity error"
 
-    main(model_space_filename, fn_out, valence_p_n, parity)
+    main(fn_snt, fn_out, nf, nparity)
