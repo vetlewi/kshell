@@ -31,8 +31,8 @@ def betzy(
         job_commands += f'#SBATCH --qos={type_of_betzy_job} \n'
     
     job_commands += 'module --quiet purge  \n'
-    job_commands += 'module load intel/2020b \n'
-    job_commands += 'module load Python/3.8.6-GCCcore-10.2.0 \n'
+    job_commands += 'module load intel/2021b \n'
+    job_commands += 'module load Python/3.10.4-GCCcore-11.3.0 \n'
     job_commands += 'set -o errexit  \n'
     job_commands += 'set -o nounset \n'
     
