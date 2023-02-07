@@ -945,17 +945,21 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
 
   #### Load and view data from KSHELL
 
-  The summary file is easily read with the `kshell-utilities` package. See the docstrings in the [kshell-utilities repository](https://github.com/GaffaSnobb/kshell-utilities) for documentation. Install the package with `pip`:
+  The summary file is easily read with the `kshell-utilities` package. See the docstrings in the [kshell-utilities repository](https://github.com/GaffaSnobb/kshell-utilities) for extended documentation. Install the package with `pip`:
   ```
   pip install kshell-utilities
   ```
-  To read a summary file:
+  Create a blank Python file with your favourite editor. Lets name it `ne20.py` and lets place it in the results directory of the 20Ne calculation which is `~/kshell_results/ne20` according to this guide. We use the `loadtxt` function to read the results from `KSHELL`:
   ``` python
   import kshell_utilities as ksutil
 
-  ne20 = ksutil.loadtxt("summary_Ne20_usda.txt")[0]
+  def main():
+    ne20 = ksutil.loadtxt(path=".")
+
+  if __name__ == "__main__":
+    main()
   ```
-  `ne20` is an instance containing several useful attributes. To see the available attributes:
+  The use of a name guard (`if __name__ == "__main__":`) is required because `kshell-utilities` uses Python's `multiprocessing` module which requires this to function properly. Note that `path` is a period (`.`). This simply means that the `KSHELL` results are located in the same directory as the Python file `ne20.py`. If we do not place `ne20.py` in the same directory as the `KSHELL` results, then we need to specify either the relative path to the `KSHELL` results from `ne20.py` or the absolute path of the `KSHELL` results which is `~/kshell_results/ne20`. Back to the `loadtxt` function. `ne20` is an instance containing several useful attributes. To see the available attributes:
   ``` python
   > print(ne20.help)
   ['debug',
@@ -979,7 +983,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   'transitions_BM1',
   'truncation']
   ```
-  To see the energy, 2\*spin and parity of each level:
+  To see the energy, 2\*angular momentum and parity of each level:
   ``` python
   > print(ne20.levels)
   [[-40.467   0.      1.   ]
@@ -1084,18 +1088,11 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   </p>
   </details>
 
-  The gamma strengh function (averaged over spins and parities) can easily be calculated by:
+  The gamma strengh function (averaged over spins and parities) can easily be calculated in several ways. The quickest way is
   ``` python
-    ne20.gsf(
-        bin_width = 0.2,
-        Ex_max = 5,
-        Ex_min = 20,
-        multipole_type = "M1",
-        plot = True,
-        save_plot = False
-    )
+    ne20.gsf()
   ```
-  or
+  which is an alias for the following function call:
   ``` python
     ne20.gamma_strength_function_average_plot(
         bin_width = 0.2,
@@ -1106,7 +1103,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
         save_plot = False
     )
   ```
-  or
+  The default parameters are applied if no function arguments are supplied. If you want to have greater control over the plotting procedure, then this solution is better:
   ``` python
     import matplotlib.pyplot as plt
     
@@ -1121,7 +1118,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
     plt.plot(bins, gsf)
     plt.show()
   ```
-  or
+  since you yourself have control over the `matplotlib` calls. The final way of doing it is:
   ``` python
   import matplotlib.pyplot as plt
 
@@ -1136,7 +1133,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   plt.plot(bins, gsf)
   plt.show()
   ```
-  where `bin_width`, `Ex_max` and `Ex_min` are in the same unit as the input energy levels, which from `KSHELL` is in MeV. `bin_width` is the width of the bins when the level density is calculated. `Ex_min` and `Ex_max` are the lower and upper limits for the excitation energy of the initial state of the transitions.
+  where the difference is that you supply the `levels` and `transitions` arrays. I'd not recommend this solution unless you have level and transition data from some other place than `KSHELL`. The parameters `bin_width`, `Ex_max` and `Ex_min` are in the same unit as the input energy levels, which from `KSHELL` is in MeV. `bin_width` is the width of the bins when the level density is calculated. `Ex_min` and `Ex_max` are the lower and upper limits for the excitation energy of the initial state of the transitions.
 
   <details>
   <summary>Click to see gamma strength function plot</summary>
