@@ -1122,8 +1122,7 @@ def main_nuclide(
 
     summary_filename = f"summary_{base_filename}.txt"
     stgout_filenames.append(summary_filename)
-    shell_file_content_single += f"./collect_logs.py log_*{base_filename}* > {summary_filename}\n"
-    shell_file_content_single += f'echo "Finish computing {base_filename}. See {summary_filename}"\necho\n\n'
+    shell_file_content_single += f'echo "Finished computing {base_filename}.\necho\n\n'
 
     return (
         base_filename,
