@@ -1154,6 +1154,71 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
 
   </p>
   </details>
+
+  <details>
+  <summary>A more advanced example of using output from KSHELL</summary>
+  <p>
+
+  ##### Acquire some beefy 44Sc results
+
+  For these more advanced examples, we need beefier files than the previous 20Ne example. Lets use a scandium-44 calculation I performed for my master's thesis. Start by creating a new directory for the 44Sc results in your results directory:
+  ``` bash
+  cd ~/kshell_results
+  mkdir sc44
+  cd sc44
+  ```
+  Then, copy the three files `000_Sc44_GCLSTsdpfsdgix5pn_tr_j0p_j2p.sh`, `save_input_ui.txt`, and `summary_Sc44_GCLSTsdpfsdgix5pn_000.tgz` from [here](https://github.com/GaffaSnobb/master-tasks/tree/main/Sc44/sdpf-sdg/200_levels/3hw) to the `sc44` directory you just created. The `.tgz` file has a download button, but the `.sh` and `.txt` files you have to copy-paste. While in the directory `~/kshell_results/sc44`, create these files with your favourite editor, for example VSCode, by:
+  ``` bash
+  code save_input_ui.txt
+  code 000_Sc44_GCLSTsdpfsdgix5pn_tr_j0p_j2p.sh
+  ```
+  and copy-paste [the contents for the .sh file](https://github.com/GaffaSnobb/master-tasks/blob/main/Sc44/sdpf-sdg/200_levels/3hw/000_Sc44_GCLSTsdpfsdgix5pn_tr_j0p_j2p.sh) and [the contents for the .txt file](https://github.com/GaffaSnobb/master-tasks/blob/main/Sc44/sdpf-sdg/200_levels/3hw/save_input_ui.txt) to their respective files which you just created, and be sure to save the files.
+
+
+  The `.tgz` file contains the 44Sc results from `KSHELL`, but the file must be un-compressed before it can be used by `kshell-utilities`. Still in the `~/kshell_results/sc44` directory, run the command
+  ``` bash
+  tar -xzvf summary_Sc44_GCLSTsdpfsdgix5pn_000.tgz
+  ```
+  to un-compress the file. You now have another file, `summary_Sc44_GCLSTsdpfsdgix5pn_000.txt`, in the same directory! Great, because now we can finally be done with this boring part and start to look at some actual examples of data analysis!
+
+  ##### Take a look at the gamma strength function of 44Sc
+
+  While in the directory `~/kshell_results/sc44`, create a Python script named `sc44.py` and read the newly un-compressed summary file by:
+  
+  ```python
+  import kshell_utilities as ksutil
+
+  def main():
+      sc44 = ksutil.loadtxt("summary_Sc44_GCLSTsdpfsdgix5pn_000.txt")
+
+  if __name__ == "__main__":
+      main()
+  ```
+  This summary file is quite large and will take 10-30 seconds to load. Your terminal should look like this when the process is done:
+
+  ```bash
+  > python sc44.py
+  Thread 0 loading Energy values...
+  Thread 1 loading B(E1) values...
+  Thread 2 loading B(M1) values...
+  Thread 3 loading B(E2) values...
+  Thread 0 finished loading Energy values in 0.03 s
+  Thread 2 finished loading B(M1) values in 6.43 s
+  Thread 1 finished loading B(E1) values in 6.61 s
+  Thread 3 finished loading B(E2) values in 10.51 s
+  ```
+  
+  Note that your `~/kshell_results/sc44` directory now has a new directory called `tmp`. This new directory contains the `KSHELL` data from the summary file stores as binary `numpy` arrays. If you run `sc44.py` again, you will se that the output is different and that the program uses 1-2 seconds instead of 10-30 seconds to run:
+  
+  ```
+  > python sc44.py
+  Summary data loaded from .npy! Use loadtxt parameter load_and_save_to_file = 'overwrite' to re-read data from the summary file.
+  ```
+
+  Instead of re-reading the data from the summary text file, `kshell-utilities` now loads the binary `numpy` arrays which is much faster. You may at any time delete the `tmp` directory without losing any data. The only downside is that the next time you run the program it will use some time reading the summary text file again.
+
+  </p>
+  </details>
   
   <!-- #### KSHELL file descriptions -->
 
