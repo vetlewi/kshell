@@ -949,7 +949,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   ```
   pip install kshell-utilities
   ```
-  Create a blank Python file with your favourite editor. Lets name it `ne20.py` and lets place it in the results directory of the 20Ne calculation which is `~/kshell_results/ne20` according to this guide. We use the `loadtxt` function to read the results from `KSHELL`:
+  Create a blank Python file with your favourite editor. Lets name it `ne20.py` and lets place it in the results directory of the 20Ne calculation which is `~/kshell_results/ne20` according to this guide. However, the use of `~/` as a shortcut to your home directory is not standard in Python and is discouraged to be used, so if you wish to specify the path to your home directory, use the actual path. For macOS: `/Users/<your username>/kshell_results/ne20`. For most Linux distros: `/home/<your username>/kshell_results/ne20`. We use the `loadtxt` function to read the results from `KSHELL`:
   ``` python
   import kshell_utilities as ksutil
 
@@ -959,7 +959,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   if __name__ == "__main__":
     main()
   ```
-  The use of a name guard (`if __name__ == "__main__":`) is required because `kshell-utilities` uses Python's `multiprocessing` module which requires this to function properly. Note that `path` is a period (`.`). This simply means that the `KSHELL` results are located in the same directory as the Python file `ne20.py`. If we do not place `ne20.py` in the same directory as the `KSHELL` results, then we need to specify either the relative path to the `KSHELL` results from `ne20.py` or the absolute path of the `KSHELL` results which is `~/kshell_results/ne20`. Back to the `loadtxt` function. `ne20` is an instance containing several useful attributes. To see the available attributes:
+  The use of a name guard (`if __name__ == "__main__":`) is required because `kshell-utilities` uses Python's `multiprocessing` module which requires this to function properly. Note that `path` is a period (`.`). This simply means that the `KSHELL` results are located in the same directory as the Python file `ne20.py`. If we do not place `ne20.py` in the same directory as the `KSHELL` results, then we need to specify either the relative path to the `KSHELL` results from `ne20.py` or the absolute path of the `KSHELL` results which is (macOS) `/Users/<your username>/kshell_results/ne20`. Back to the `loadtxt` function. `ne20` is an instance containing several useful attributes. To see the available attributes:
   ``` python
   > print(ne20.help)
   ['debug',
@@ -1014,28 +1014,31 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
 
   You can easily create a level density plot by
   ``` python
-  ne20.level_density_plot(bin_size=1)
+  ne20.level_density_plot()
   ```
-  or by
+  An alternative way is:
   ``` python
+  ground_state_energy: float = ne20.levels[0, 0]
   ksutil.level_density(
-      energy_levels = ne20.levels[:, 0],
-      bin_size = 1,
+      levels = ne20.levels[:, 0] - ground_state_energy,
+      bin_width = 0.2,
       plot = True
   )
   ```
-  or by
+  Note that scaling the excitation energies by the ground state energy is required with this method. If you want greater control of `matplotlib` plotting parameters, use this method:
   ``` python
   import matplotlib.pyplot as plt
-  
+
+  ground_state_energy: float = ne20.levels[0, 0]
   bins, density = ksutil.level_density(
-      energy_levels = ne20.levels[:, 0],
-      bin_size = 1
+      levels = ne20.levels[:, 0] - ground_state_energy,
+      bin_width = 0.2,
+      plot = False,
   )
   plt.step(bins, density)
   plt.show()
   ```
-  Choose an appropriate bin size. The two latter ways of generating the plot does not require that the data comes from `KSHELL`. Use any energy level data. The plot will look like this:
+  The `bin_width` is in the same energy units as your results, which for `KSHELL` is MeV. The two latter ways of generating the plot does not require that the data comes from `KSHELL`. Use any energy level data normalised to the ground state energy. The plot will look like this:
   
   <details>
   <summary>Click to see level density plot</summary>
@@ -1071,10 +1074,10 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   </p>
   </details>
 
-  Both ways of generating the level plot supports selecting what spins to include in the plot, and how many levels per spin:
+  Both ways of generating the level plot supports selecting what total angular momenta to include in the plot, and how many levels per angular momentum. 
   ``` python
   ne20.level_plot(
-      max_spin_states = 3,
+      include_n_levels = 3,
       filter_spins = [0, 3, 5]
   )
   ```
@@ -1088,7 +1091,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   </p>
   </details>
 
-  The gamma strengh function (averaged over spins and parities) can easily be calculated in several ways. The quickest way is
+  The gamma strengh function (averaged over total angular momenta and parities) can easily be calculated in several ways. The quickest way is
   ``` python
     ne20.gsf()
   ```
@@ -1109,8 +1112,8 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
     
     bins, gsf = ne20.gamma_strength_function_average_plot(
         bin_width = 0.2,
-        Ex_max = 5,
-        Ex_min = 20,
+        Ex_max = 50,
+        Ex_min = 5,
         multipole_type = "M1",
         plot = False,
         save_plot = False
@@ -1118,7 +1121,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
     plt.plot(bins, gsf)
     plt.show()
   ```
-  since you yourself have control over the `matplotlib` calls. The final way of doing it is:
+  since you yourself have control over the `matplotlib` calls. Note that `Ex_max` is set to way higher energy than you get from the `KSHELL` calculations. Typical max energy from a `KSHELL` calculation is in the range `[8, 12]`MeV. The default upper limit is set large as to include all levels of any `KSHELL` calculation. The final way of doing it is:
   ``` python
   import matplotlib.pyplot as plt
 
@@ -1133,7 +1136,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   plt.plot(bins, gsf)
   plt.show()
   ```
-  where the difference is that you supply the `levels` and `transitions` arrays. I'd not recommend this solution unless you have level and transition data from some other place than `KSHELL`. The parameters `bin_width`, `Ex_max` and `Ex_min` are in the same unit as the input energy levels, which from `KSHELL` is in MeV. `bin_width` is the width of the bins when the level density is calculated. `Ex_min` and `Ex_max` are the lower and upper limits for the excitation energy of the initial state of the transitions.
+  where the difference is that you supply the `levels` and `transitions` arrays. I'd not recommend this final solution unless you have level and transition data from some other place than `KSHELL`. The parameters `bin_width`, `Ex_max` and `Ex_min` are in the same unit as the input energy levels, which from `KSHELL` is in MeV. `bin_width` is the width of the bins when the level density is calculated. `Ex_min` and `Ex_max` are the lower and upper limits for the excitation energy of the initial state of the transitions.
 
   <details>
   <summary>Click to see gamma strength function plot</summary>
