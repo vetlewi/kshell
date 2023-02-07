@@ -1011,6 +1011,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   ```
 
   #### Visualise data from KSHELL 
+  ##### Create a level density plot
 
   You can easily create a level density plot by
   ``` python
