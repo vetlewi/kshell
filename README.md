@@ -1179,9 +1179,9 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   ``` bash
   tar -xzvf summary_Sc44_GCLSTsdpfsdgix5pn_000.tgz
   ```
-  to un-compress the file. You now have another file, `summary_Sc44_GCLSTsdpfsdgix5pn_000.txt`, in the same directory! Great, because now we can finally be done with this boring part and start to look at some actual examples of data analysis!
+  to un-compress the file. You now have another file, `summary_Sc44_GCLSTsdpfsdgix5pn_000.txt`, in the same directory! Great! We need to download one more file which you can find [here](https://github.com/GaffaSnobb/master-tasks/blob/main/Sc44/Sc44_gsf.txt) (it has a download button). This file contains the experimental gamma strength function of 44Sc. Please place it in the same directory, namely `~/kshell_results/sc44`.
 
-  ##### Take a look at the gamma strength function of 44Sc
+  ##### Load the 44Sc data into kshell-utilities
 
   While in the directory `~/kshell_results/sc44`, create a Python script named `sc44.py` and read the newly un-compressed summary file by:
   
@@ -1189,7 +1189,9 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   import kshell_utilities as ksutil
 
   def main():
-      sc44 = ksutil.loadtxt("summary_Sc44_GCLSTsdpfsdgix5pn_000.txt")
+    sc44 = ksutil.loadtxt(
+      path = "summary_Sc44_GCLSTsdpfsdgix5pn_000.txt"
+    )
 
   if __name__ == "__main__":
       main()
@@ -1208,14 +1210,121 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   Thread 3 finished loading B(E2) values in 10.51 s
   ```
   
-  Note that your `~/kshell_results/sc44` directory now has a new directory called `tmp`. This new directory contains the `KSHELL` data from the summary file stores as binary `numpy` arrays. If you run `sc44.py` again, you will se that the output is different and that the program uses 1-2 seconds instead of 10-30 seconds to run:
+  Note that your `~/kshell_results/sc44` directory now has a new directory called `tmp`. This new directory contains the `KSHELL` data from the summary file stored as binary `numpy` arrays. If you run `sc44.py` again, you will se that the output is different and that the program uses 1-2 seconds instead of 10-30 seconds to run:
   
-  ```
+  ```bash
   > python sc44.py
   Summary data loaded from .npy! Use loadtxt parameter load_and_save_to_file = 'overwrite' to re-read data from the summary file.
   ```
 
-  Instead of re-reading the data from the summary text file, `kshell-utilities` now loads the binary `numpy` arrays which is much faster. You may at any time delete the `tmp` directory without losing any data. The only downside is that the next time you run the program it will use some time reading the summary text file again.
+  Instead of re-reading the data from the summary text file, `kshell-utilities` now loads the binary `numpy` arrays which is much faster. You may at any time delete the `tmp` directory without losing any data. The only downside is that the next time you run the program it will use some time reading the summary text file again. The reason to include the `save_input_ui.txt` and `000_Sc44_GCLSTsdpfsdgix5pn_tr_j0p_j2p.sh` files is because they contain specific information about the calculation parameters of the 44Sc calculations, like the number of levels per angular momentum-parity pair, the truncation, the interaction used, etc. `kshell-utilities` uses this information to generate unique identifiers for the contents of the `tmp` directory in case the `tmp` directory should contain data from several different 44Sc `KSHELL` calculations. Not strictly necessary for this example, but this is the intended way to use `kshell-utilities`.
+
+
+  ##### Take a look at the gamma strength function of 44Sc
+  Lets take a look at a properly calculated gamma strength function. For reference, this 44Sc calculation took a few days of calculation time on [Betzy, Norway's most powerful supercomputer](https://documentation.sigma2.no/hpc_machines/betzy.html). Extend your Python script to include the following:
+
+  ```python
+  import kshell_utilities as ksutil
+  import numpy as np
+  import matplotlib.pyplot as plt
+  ksutil.latex_plot()
+  ksutil.flags["debug"] = True
+
+  BIN_WIDTH = 0.2
+  EX_MIN = 5
+  EX_MAX = 9.699    # S(n).
+
+  def main():
+    fig, ax = plt.subplots()
+    N, Ex, gsf_experimental, gsf_std = np.loadtxt("Sc44_gsf.txt", skiprows=2, unpack=True)
+    ax.errorbar(Ex, gsf_experimental, yerr=gsf_std, fmt=".", capsize=1, elinewidth=0.5, label="Exp", color="black")
+    
+    sc44 = ksutil.loadtxt(
+      path = "summary_Sc44_GCLSTsdpfsdgix5pn_000.txt",
+    )
+    bins, gsf_M1 = sc44.gsf(
+      bin_width = BIN_WIDTH,
+      Ex_min = EX_MIN,
+      Ex_max = EX_MAX,
+      multipole_type = "M1",
+      plot = False
+    )
+    bins, gsf_E1 = sc44.gsf(
+      bin_width = BIN_WIDTH,
+      Ex_min = EX_MIN,
+      Ex_max = EX_MAX,
+      multipole_type = "E1",
+      plot = False
+    )
+    ax.step(bins, (gsf_M1 + gsf_E1), label=r"SM $E1 + M1$", color="grey")
+    ax.step(bins, gsf_M1, label=r"SM $M1$", color="red")
+    ax.step(bins, gsf_E1, label=r"SM $E1$", color="blue")
+
+    ax.set_yscale('log')
+    ax.set_xlabel(r"E$_{\gamma}$ [MeV]")
+    ax.set_ylabel(r"GSF [MeV$^{-3}$]")
+    ax.legend()
+    plt.show()
+  ```
+  Run `sc44.py` again now and let it think for a few seconds. You should see a bunch of debug information like so:
+  
+  <details>
+  <summary>Click here to see a bunch of debug information</summary>
+  <p>
+
+  ```bash
+  > python sc44.py
+  Summary data loaded from .npy! Use loadtxt parameter load_and_save_to_file = 'overwrite' to re-read data from the summary file.
+  loadtxt_time = 0.1195173840096686 s
+  --------------------------------
+  transit_gsf_time = 0.770901508978568 s
+  level_density_gsf_time = 0.0019428109808359295 s
+  gsf_time = 0.0072257140127476305 s
+  avg_gsf_time = 8.191799861378968e-05 s
+  total_gsf_time = 0.7898409570043441 s
+  multipole_type = 'M1'
+  Skips: Transit: Energy range: 698614
+  Skips: Transit: Number of levels: 0
+  Skips: Transit: Parity: 0
+  Skips: Level density: Energy range: 2320
+  Skips: Level density: Number of levels: 0
+  Skips: Level density: Parity: 0
+  transit_total_skips = 698614
+  n_transitions = 898504
+  n_transitions_included = 199890
+  level_density_total_skips = 2320
+  n_levels = 3600
+  n_levels_included = 1280
+  --------------------------------
+  --------------------------------
+  transit_gsf_time = 0.44835006099310704 s
+  level_density_gsf_time = 0.0018729210132732987 s
+  gsf_time = 0.007104302989318967 s
+  avg_gsf_time = 7.715600077062845e-05 s
+  total_gsf_time = 0.4653512270015199 s
+  multipole_type = 'E1'
+  Skips: Transit: Energy range: 879173
+  Skips: Transit: Number of levels: 0
+  Skips: Transit: Parity: 0
+  Skips: Level density: Energy range: 2320
+  Skips: Level density: Number of levels: 0
+  Skips: Level density: Parity: 0
+  transit_total_skips = 879173
+  n_transitions = 958400
+  n_transitions_included = 79227
+  level_density_total_skips = 2320
+  n_levels = 3600
+  n_levels_included = 1280
+  --------------------------------
+  ```
+  </p>
+  </details>
+
+  and you'll se a nice GSF plot with both experimental values and `KSHELL` calculations.
+
+
+  BREAKING NEWS: Ola Nordmann (43) was SHOCKED when he discovered why there is such a big difference between the experimental data and the calculated GSF of 44Sc. [Read the full story here!](https://github.com/GaffaSnobb/master-tasks/blob/main/doc/masters_thesis_final.pdf).
+
 
   </p>
   </details>
