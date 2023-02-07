@@ -489,7 +489,7 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   mkdir -p kshell_results/ne20
   cd kshell_results/ne20
   ```
-  I use the name `ne20` and not `20ne` because some applications, like Python, do not support variable, function, etc. naming with numbers at the start, and I'm trying to be consise and consequent. Note that you now have an install directory: `~/kshell` and a result directory: `~/kshell_results` in your home. Be sure that you understand the difference between these two directories. The former is the location of the actual `KSHELL` program files, and the latter is the location where you wish to place the results from your `KSHELL` calculations. Don't mix these up. You woldn't place your Word documents inside the installation folder of Microsoft Office, would you? Now, inside the **results directory** `~/kshell_results/ne20`, initialise the `KSHELL` setup process by running the command:
+  I use the name `ne20` and not `20ne` because some applications, like Python, do not support variable, function, etc. naming with numbers at the start, and I'm trying to be consise and consequent. Note that you now have an install directory: `~/kshell` and a result directory: `~/kshell_results` in your home. Be sure that you understand the difference between these two directories. The former is the location of the actual `KSHELL` program files, and the latter is the location where you wish to place the results from your `KSHELL` calculations. Don't mix these up. You woldn't place your Word documents inside the installation folder of Microsoft Office, would you? Now, inside the **results directory** for 20Ne `~/kshell_results/ne20`, initialise the `KSHELL` setup process by running the command:
   ```
   python ~/kshell/bin/kshell_ui.py
   ```
@@ -502,16 +502,16 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   model space and interaction file name (.snt)
   (e.g. w or w.snt,  TAB to complete) : usda.snt
   ```
-  Now we specify the nuclide. Here you may enter either the number of valence protons and neutrons or the isotope abbreviation (20ne or ne20, upper or lower case does not matter). 20Ne has 2 valence protons and 2 valence neutrons outside the 8p 8n core, so the input may either be `2, 2` or `20ne`:
+  Now we specify the nuclide. Here you may enter either the number of valence protons and neutrons or the isotope abbreviation (20ne or ne20, upper or lower case does not matter). 20Ne has 2 valence protons and 2 valence neutrons outside the 8p 8n core, so the input may either be `2, 2` or `ne20`:
   ```
   number of valence protons and neutrons
-  (ex.  2, 3 <CR> or 9Be <CR>)    <CR> to quit : 20ne
+  (ex.  2, 3 <CR> or 9Be <CR>)    <CR> to quit : ne20
   ```
-  We are now prompted for the name of the executable shell script. Press the return key for the default name:
+  We are now prompted for the name of the executable shell script. Press the enter key for the default name:
   ```
   name for script file (default: Ne20_usda ):
   ```
-  Choose which angular momentum levels you want to calculate and how many. The default value is to calculate the 10 lowest lying levels. See a section later in this document on details. For this example we choose the default value:
+  Choose which angular momentum levels you want to calculate and how many. The default value is to calculate the 10 lowest lying levels. See a section later in this document on how to choose specific angular momenta and parities. For this example we choose the default value (just press enter):
   ```
   J, parity, number of lowest levels
     (ex. 10          for 10 +parity, 10 -parity levels w/o J-proj. (default)
