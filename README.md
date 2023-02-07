@@ -483,38 +483,44 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   <summary>General usage</summary>
   <p>
 
-  We will here use 20Ne as an example. Create a directory where you want to place the output from `KSHELL`. cd to that directory and run
+  We will here use 20Ne as an example. Create a directory where you want to place the **results** from `KSHELL`. Note that this directory should be at a separate location from where you installed `KSHELL`. For example, create a directory in your home and enter the newly created directory:
   ```
-  python <kshell_install_directory>/bin/kshell_ui.py
+  cd ~/
+  mkdir -p kshell_results/ne20
+  cd kshell_results/ne20
   ```
-  You will now be asked whether you want to use `MPI` or not. `MPI` is used for parallelization over multiple nodes. The parallelization over several cores per CPU is administered by `OpenMP` and is active even though you do not choose `MPI` here. For a regular PC, choose `n`. For running on the Fram supercomputer, choose `fram`:
+  I use the name `ne20` and not `20ne` because some applications, like Python, do not support variable, function, etc. naming with numbers at the start, and I'm trying to be consise and consequent. Note that you now have an install directory: `~/kshell` and a result directory: `~/kshell_results` in your home. Be sure that you understand the difference between these two directories. The former is the location of the actual `KSHELL` program files, and the latter is the location where you wish to place the results from your `KSHELL` calculations. Don't mix these up. You woldn't place your Word documents inside the installation folder of Microsoft Office, would you? Now, inside the **results directory** `~/kshell_results/ne20`, initialise the `KSHELL` setup process by running the command:
+  ```
+  python ~/kshell/bin/kshell_ui.py
+  ```
+  This will start the preparations for your 20Ne calculation where you will be asked a series of questions. First, you'll be asked whether you want to use `MPI` (Message Parsing Interface) or not. `MPI` is used for parallelization over multiple nodes (computers) and is mainly applicable for running `KSHELL` on supercomputers. Parallelization over several cores per node is administered by `OpenMP` and is active even though you do not choose `MPI` here. For a regular PC, choose `n`:
   ```
   MPI parallel? Y/N/preset, n nodes (default: N,  TAB to complete) : n
   ```
-  You are now asked to choose the model space. 20Ne has 10 protons and 10 neutrons which makes the doubly magic 8p 8n core suitable for the inert core. 0d5/2, 1s1/2 and 0d3/2 will then be the model space where the valence nucleons can move about. This is the `USD` model space. Take a look at [this figure](https://periodic-table.org/wp-content/uploads/2019/05/Shell-model-of-nucleus.png) and see if you agree (note the different notation conventions, nlj and (n+1)lj (N = 2n + l)). We choose `usda.snt` for this input.
+  You are now asked to choose the model space you wish to use. 20Ne has 10 protons and 10 neutrons which makes the doubly magic 8p 8n core suitable for the inert core. 0d5/2, 1s1/2 and 0d3/2 will then be the model space where the valence nucleons can move about. This is the `USD` model space. Take a look at [this figure](https://periodic-table.org/wp-content/uploads/2019/05/Shell-model-of-nucleus.png) and see if you agree (note the different notation conventions, nlj and (n+1)lj (N = 2n + l)). We choose `usda.snt` for this example.
   ```
   model space and interaction file name (.snt)
   (e.g. w or w.snt,  TAB to complete) : usda.snt
   ```
-  Now we specify the nuclide. Here you may enter either the number of valence protons and neutrons or the isotope abbreviation (20ne or ne20). 20Ne has 2 valence protons and 2 valence neutrons outside the 8p 8n core, so the input may either be `2, 2` or `20ne`:
+  Now we specify the nuclide. Here you may enter either the number of valence protons and neutrons or the isotope abbreviation (20ne or ne20, upper or lower case does not matter). 20Ne has 2 valence protons and 2 valence neutrons outside the 8p 8n core, so the input may either be `2, 2` or `20ne`:
   ```
   number of valence protons and neutrons
-  (ex.  2, 3 <CR> or 9Be <CR>)    <CR> to quit : 2,2
+  (ex.  2, 3 <CR> or 9Be <CR>)    <CR> to quit : 20ne
   ```
   We are now prompted for the name of the executable shell script. Press the return key for the default name:
   ```
   name for script file (default: Ne20_usda ):
   ```
-  Choose which spin states you want to calculate and how many. The default value is to calculate the 10 lowest lying states. See a section later in this document on details:
+  Choose which angular momentum levels you want to calculate and how many. The default value is to calculate the 10 lowest lying levels. See a section later in this document on details. For this example we choose the default value:
   ```
-  J, parity, number of lowest states
-    (ex. 10          for 10 +parity, 10 -parity states w/o J-proj. (default)
-        -5           for lowest five -parity states,
-        0+3, 2+1     for lowest three 0+ states and one 2+ states,
-        1.5-1, 3.5+3 for lowest one 3/2- states and three 7/2+ states
-        range        for a range of states) :
+  J, parity, number of lowest levels
+    (ex. 10          for 10 +parity, 10 -parity levels w/o J-proj. (default)
+        -5           for lowest five -parity levels,
+        0+3, 2+1     for lowest three 0+ levels and one 2+ levels,
+        1.5-1, 3.5+3 for lowest one 3/2- levels and three 7/2+ levels
+        range        for a range of levels) :
   ```
-  We are now asked for truncation information. The model space is small and the number of nucleos is low, so we dont need to truncate this system. The default is no truncation. 20Ne in the `USD` model space only allows positive parity states, so we are only asked for truncation of the positive parity states. See a section later in this document for truncation details:
+  We are now asked for truncation information. The model space is small and the number of nucleos is low, so we dont need to truncate this system. The default is no truncation. 20Ne in the `USD` model space only allows positive parity levels, so we are only asked for truncation of the positive parity levels. See a section later in this document for truncation details. Choose the default value of no truncation:
   ```
   truncation for "+" parity state in  Ne20_usda_p.ptn
   truncation scheme ?
@@ -526,10 +532,10 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   ```
   At this point we are asked whether we want to edit any other parameters, like the proton and neutron effective charges, the gyroscopic spin factor and the number of Lanczos iterations. Change these to your needs (tab complete is supported). In this demo, we'll leave them to the default values:
   ```
-Modify parameters?
-Example: maxiter = 300 for parameter change or <CR> for no more modification.
-Available paramters are:
-['max_lanc_vec', 'maxiter', 'n_restart_vec', 'hw_type', 'mode_lv_hdd', 'n_block', 'eff_charge', 'gl', 'gs', 'beta_cm', 'fn_int', 'is_obtd', 'is_ry_sum', 'is_calc_tbme', 'sq', 'quench', 'is_tbtd']
+  Modify parameters?
+  Example: maxiter = 300 for parameter change or <CR> for no more modification.
+  Available paramters are:
+  ['max_lanc_vec', 'maxiter', 'n_restart_vec', 'hw_type', 'mode_lv_hdd', 'n_block', 'eff_charge', 'gl', 'gs', 'beta_cm', 'fn_int', 'is_obtd', 'is_ry_sum', 'is_calc_tbme', 'sq', 'quench', 'is_tbtd']
 
 
  --- set parameters ---
@@ -544,19 +550,19 @@ Available paramters are:
   n_block = 0
   n_restart_vec = 10
 
-:
+  :
   ```
-  The transition probabilities are calculated by default, but they can be omitted. Choose the default value:
+  The transition probabilities are calculated by default, but they can be omitted. For this example we want to calculate the transition probabilities, so please select `y`:
   ```
   compute transition probabilities (E2/M1/E1) for
-      Ne20_usda ? Y/N (default: Y) :
+      Ne20_usda ? Y/N (default: Y) : y
   ```
-  Now you may repeat the process and add parameters for another nuclide (per 2022-08-29 only one nuclide is supported at a time). Press return to skip this step. For the last step you are asked if you want to split the commands into separate shell scripts. This is handy for running very large calculations on supercomputers, but not for running smaller calculations on single PCs. We'll choose 'no': 
+  Now you may repeat the process and add parameters for another nuclide (per 2022-08-29 only one nuclide is supported at a time so the program will crash if you try to add an additional nuclide). Press enter to skip this step. For the last step you are asked if you want to split the commands into separate shell scripts. This is handy for running very large calculations on supercomputers, but not for running smaller calculations on single PCs. We'll choose `n`: 
   ```
-Split shell files? y/n (default: n): n
-Setup complete. Exiting...
+  Split shell files? y/n (default: n): n
+  Setup complete. Exiting...
   ```
-  The directory should now include these files:
+  At this point the preparations before running the actual calculations are complete. Your data directory `~/kshell_results/ne20` should now contain these files:
 
   ```
   Ne20_usda.sh
@@ -568,7 +574,7 @@ Setup complete. Exiting...
   transit.exe
   usda.snt
   ```
-  Run `KSHELL` with these parameters by:
+  See file descriptions later in this document if you want to know what they all do. Run your 20Ne `KSHELL` calculation by:
   ```
   ./Ne20_usda.sh
   ```
@@ -576,8 +582,9 @@ Setup complete. Exiting...
   ```
   start running log_Ne20_usda_m0p.txt ...
   start running log_Ne20_usda_tr_m0p_m0p.txt ...
-  Finish computing Ne20_usda.    See summary_Ne20_usda.txt
+  Finish computing Ne20_usda.
   ```
+  Congrats! You have just performed your first `KSHELL` calculation! To use these results, please se the *General usage* section later in this document.
 
   </p>
   </details>
@@ -590,15 +597,15 @@ Setup complete. Exiting...
   
   `kshell_ui.py` asks you to choose what spin and parity levels you want to calculate:
   ```
-  J, parity, number of lowest states
-    (ex. 100          for 100 +parity, 100 -parity states w/o J-proj. (default)
-        -5           for lowest five -parity states,
-        0+3, 2+1     for lowest three 0+ states and one 2+ states,
-        1.5-1, 3.5+3 for lowest one 3/2- states and three 7/2+ states)
-        range        for a range of states) :
+  J, parity, number of lowest levels
+    (ex. 100          for 100 +parity, 100 -parity levels w/o J-proj. (default)
+        -5           for lowest five -parity levels,
+        0+3, 2+1     for lowest three 0+ levels and one 2+ levels,
+        1.5-1, 3.5+3 for lowest one 3/2- levels and three 7/2+ levels)
+        range        for a range of levels) :
   ```
   * Entering an integer `N` will ask `KSHELL` to produce the `N` lowest lying energy levels, regardless of spin and parity. Example: Inputting `1337` will produce the 1337 lowest lying energy levels.
-  * Prepending a plus sign (`+`) or a minus sign (`-`) to the integer will specify which parity you want to calculate the levels for. Note that your chosen nuclide and model space might only be able to produce either positive or negative parity states. Example: `+1337` will produce the 1337 lowest lying positive parity levels.
+  * Prepending a plus sign (`+`) or a minus sign (`-`) to the integer will specify which parity you want to calculate the levels for. Note that your chosen nuclide and model space might only be able to produce either positive or negative parity levels. Example: `+1337` will produce the 1337 lowest lying positive parity levels.
   * You can request the `N` lowest lying levels of a specific spin and parity. Example: `0+3` will produce the three lowest lying levels with spin 0 and positive parity.
   * You can request several different specific spin and parity levels. Example: `1.5-1, 3.5+3` will produce the lowest lying level of spin 3/2 and negative parity, as well as the three lowest lying levels of spin 7/2 and positive parity.
   * The `range` functionality lets you easily select `N` levels for a range of different angular momenta. Any invalid choice will be filtered away, like choosing integer angular momenta for a nucleus of half integer angular momenta, or choosing a parity which the interaction does not support. In the following example we select 10 positive parity levels for angular momenta 0, 1, 2, and 3:
@@ -621,7 +628,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   <summary>How to calculate the dimensionality</summary>
   <p>
 
-  After answering all the questions from `kshell_ui.py` it might be reasonable to check the dimensionality of the configuration to see if your computer will actually manage to solve the calculations. At this point, the work folder will look something like this:
+  After answering all the questions from `kshell_ui.py` it might be reasonable to check the dimensionality of the configuration to see if your computer will actually manage to solve the calculations. At this point, the results directory will look something like this:
   ```
   Ne20_usda.sh
   Ne20_usda_p.ptn
