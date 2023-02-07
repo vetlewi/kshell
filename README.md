@@ -41,7 +41,7 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
 <summary>Click here for prerequisites</summary>
 <p>
 
-  * ```Python 3.8``` or newer (kshell_ui.py uses syntax specific to 3.8 and above)
+  * ```Python 3.10``` or newer (kshell_ui.py uses syntax specific to 3.10 and above)
     * `numpy`
     * `matplotlib` (not required but recommended)
     * `kshell-utilities` (not required but recommended)
@@ -217,7 +217,7 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   ```
   apt search openblas
   ```
-  and try a few different versions to see which one works. You check that the version is correct by compiling `KSHELL`. Instructions on this below.
+  and try a few different versions to see which one works. You check that the version is correct by compiling `KSHELL` and seeing whether the compile completes or not. Compilation instructions are following.
 
   #### Python
   For installing the correct version of Python, it is highly recommended to install an environment management system like `miniconda` as to not mess up any other Python dependencies your system has, and to easily download the exact version needed. Start by downloading the latest release of `miniconda` ([alternative downloads here](https://docs.conda.io/en/latest/miniconda.html)):
@@ -228,33 +228,33 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   ```
   bash Miniconda3-latest-Linux-x86_64.sh
   ```
-  Accept the ToS. Choose all default settings except when the installer asks if it should initialize by running conda init. Choose yes. If you have trouble with initializing conda, for example
+  Accept the terms of service. Choose all default settings except when the installer asks if it should initialize by running conda init. Choose yes. If you have trouble with initializing conda, for example
   ```
   > conda
   conda: command not found
   ```
-  cd to `<install_location>/anaconda3/bin` and initialize conda from there. If you for example use `fish` instead of `bash` (you should!), then initialize with
+  cd to `<install_location>/anaconda3/bin` and initialize conda from there (replace `<install_location>` with the path to where you downloaded the file `Miniconda3-latest-Linux-x86_64.sh`). If you for example use `fish` instead of `bash` (you should!), then initialize with
   ```
   ./conda init fish
   ```
-  When the initialization is complete, create an environment named `kshell` with `Python 3.8` along with `numpy` and `matplotlib`:
+  At this point, please close your terminal and open a new one. When the initialization is complete, create an environment named `kshell` with `Python 3.10` with:
   ```
-  conda create --name kshell python=3.8 numpy matplotlib
+  conda create --name kshell python=3.10
   ```
   Activate the environment with:
   ```
   conda activate kshell
   ```
-  Note that any additional Python package can be installed normally with `pip`. The `kshell` environment is only active within your terminal session and does not interfere with any other Python dependencies on your system.
+  Note that any additional Python packages may be installed normally with `pip`. You do not have to type `pip3` or `python3` because conda maps `pip` and `python` to the requested version of Python. The `kshell` environment is only active within your terminal session and does not interfere with any other Python dependencies on your system. This is one of the main reasons why I recommend using an environment manager. Should you at any time in the future need a different version of Python (newer or older), simply create a conda environment with the appropriate Python version. You can see the currently active conda environment in the bottom right or left corner of your terminal. The default environment is called `(base)` and if you have followed these instructions you will see that the active environment is `(kshell)`.
 
-  Alternatively, download `Python 3.8` with the Ubuntu packet manager.
+  As an alternative to using the forementioned conda approach, you can download `Python 3.10` with your distro's appropriate packet manager. Use `apt search python` to find the correct name of Python version 3.10 or newer.
 
   #### Compile KSHELL
   We are now ready to actually install `KSHELL`. Navigate to the directory where you want to install `KSHELL` and clone this repository:
   ```
   git clone https://github.com/GaffaSnobb/kshell.git
   ```
-  Navigate to the `src/` directory and edit the `Makefile` with your favorite editor. Change `FC = gfortran` to `FC = gfortran-10` (or `-11` if you installed version 11) and make sure that line is un-commented. All other `FC` declarations should be commented. Save the changes. Still in the `src/` directory, run
+  When the clone is successful use `ls` to see that you have a new directory called `kshell`. Navigate to the `kshell/src/` directory and edit the `Makefile` with your favorite editor. Change `FC = gfortran` to `FC = gfortran-10` (or `-11` if you installed version 11) and make sure that line is un-commented. All other `FC` declarations should be commented or deleted. Save the changes. Still in the `src/` directory, run
   ```
   make
   ```
@@ -318,8 +318,8 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
 
   </p>
   </details>
-
-  `KSHELL` is now compiled and ready to use. See a section further down in this readme for instructions on how to run `KSHELL`.
+  
+  If the output of your terminal is like the expected terminal output listed above then `KSHELL` is compiled correctly and ready to use. See a section further down in this readme for instructions on how to run `KSHELL`. If your terminal reports that the command `gfortran` cannot be found then you need to correctly edit your `Makefile` with `FC = <correct gfortran command>`. It might be `gfortran`, `gfortran-10`, `gfortran-11` or something similar.
 
   </p>
   </details>
@@ -331,7 +331,7 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   <p>
 
   #### Homebrew
-  `Homebrew` is a packet manager for macOS similar to `apt` for Ubuntu and frankly, every (soon to be) scientist using macOS should have `Homebrew` installed. Install with ([see detailed install instructions here](https://brew.sh)):
+  `Homebrew` is a packet manager for macOS similar to `apt` for Ubuntu and frankly, every scientist using macOS should have `Homebrew` installed. Install with ([or see detailed install instructions here](https://brew.sh)):
   ```
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   ```
@@ -341,51 +341,70 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   ```
   brew install gfortran
   ```
-  and check that the version is equal to or greater than 10.2.0 by:
+  and check that the version is equal to or greater than 10.2.0 by (version x.y.z with x > 10 should also be fine):
   ```
   gfortran --version
   ```
 
   #### Python
-  For installing the correct version of Python, it is highly recommended to install an environment management system like `miniconda` as to not mess up any other Python dependencies your system has, and to easily download the exact version needed. Start by downloading the latest release of `miniconda` ([alternative downloads here](https://docs.conda.io/en/latest/miniconda.html)):
+  For installing the correct version of Python, it is highly recommended to install an environment management system like `miniconda` as to not mess up any other Python dependencies your system has, and to easily download the exact version needed. Start by `cd`ing to your downloads directory with
+  ```
+  cd ~/Downloads
+  ```
+  and download the latest release of `miniconda` ([alternative downloads here](https://docs.conda.io/en/latest/miniconda.html)) by:
   ```
   wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
   ```
-  Run the installer:
+  Then, run the installer which you just downloaded with:
   ```
   bash Miniconda3-latest-MacOSX-x86_64.sh
   ```
-  Accept the ToS. Choose all default settings except when the installer asks if it should initialize by running conda init. Choose yes. Remember to close and re-open your terminal session for the conda installation to function properly. If you have trouble with initializing conda, for example
+  Follow the on-screen instructions and accept the terms of service. Choose all default settings except when the installer asks if it should initialize by running conda init. For that option select yes. After the installation is complete, close and re-open your terminal session for the conda installation to function properly. Check that conda has been installed by running the command `conda`. If a helpful description of conda shows up in your terminal then the installation is complete. However, if you see
   ```
   > conda
   conda: command not found
   ```
-  cd to `<install_location>/anaconda3/bin` and initialize conda from there. If you for example use `fish` instead of `bash` (you should!), then initialize with
+  then conda has not been installed properly. To fix this, `cd` to `<install_location>/anaconda3/bin` and initialize conda from there. Replace `<install_location>` with the path to where you downloaded the file `Miniconda3-latest-Linux-x86_64.sh` which should be `~/Downloads` if you followed these instructions. Then, initialise conda with:
   ```
-  ./conda init fish
+  ./conda init bash
   ```
-  When the initialization is complete, create an environment named `kshell` with `Python 3.8` along with `numpy` and `matplotlib`:
+  Replace `bash` if you are using a different shell, for example `zsh` or `fish` to mention a few. Close your terminal and open a new session, then run the command `conda` once more to see that the installation is proper. When the initialization is complete, create an environment named `kshell` with `Python 3.10`:
   ```
-  conda create --name kshell python=3.8 numpy matplotlib
+  conda create --name kshell python=3.10
   ```
   Activate the environment with:
   ```
   conda activate kshell
   ```
-  Note that any additional Python package can be installed normally with `pip`. The `kshell` environment is only active within your terminal session and does not interfere with any other Python dependencies on your system.
+  Note that any additional Python packages may be installed normally with `pip`. You do not have to type `pip3` or `python3` because conda maps `pip` and `python` to the requested version of Python. For example, to install `numpy`, simply run:
+  ```
+  pip install numpy
+  ```
+  The `kshell` environment is only active within your terminal session and does not interfere with any other Python dependencies on your system. You can see the currently active conda environment in the bottom right or left corner of your terminal. The default environment is called `(base)` and if you have followed these instructions you will see that the active environment is `(kshell)`. This is one of the main reasons why I recommend using an environment manager. You may mess around however much you like inside of any conda environment **other than** `base` without having to worry about a thing. Should you at any time in the future need a different version of Python (newer or older), simply create a conda environment with the appropriate Python version.
+  
+  You: I need Python 2.7 to run some old code. Lets open the good ole' terminal.
+  Apple: Tough luck. 2.7 is not included in newer versions of macOS.
+  You: But wait... I have conda!
+  ```
+  conda create --name <name of environment here> python=2.7
+  conda activate <name of environment here>
+  python --version
+  > Python 2.7.18
+  ```
+  You: Noice!
 
-  Alternatively, download `Python 3.8` with `brew`.
+  As an alternative to using the forementioned conda approach, you can download `Python 3.10` with `brew`. Use `brew search python` to find the correct name of Python version 3.10 or newer and then use `brew install <correct name>` to install it. Note that you may have to use `python3.10 myfile.py` to actually use version 3.10.
 
   #### Compile KSHELL
-  We are now ready to actually install `KSHELL`. Navigate to the directory where you want to install `KSHELL` and clone this repository:
+  We are now ready to actually compile (install) `KSHELL`. Navigate to the directory where you want to install `KSHELL`. This guide assumes that you use your home directory (`cd ~/`) but you may use another path if you'd like. Note that you do not need to create a directory called kshell (or whatever), because such a directory will be created during the installation. In your home directory, clone this repo with the command:
   ```
   git clone https://github.com/GaffaSnobb/kshell.git
   ```
-  Navigate to the `src/` directory and run
+  which copies all the needed files to your home inside a directory called `kshell`. `cd` to the `~/kshell/src/` directory and run the command
   ```
   make
   ```
-  to compile. The output should be something like this (mismatch warnings are normal):
+  to compile `KSHELL`. The output should be something like this (mismatch warnings are normal):
   
   <details>
   <summary>Click to see normal terminal output</summary>
@@ -446,8 +465,31 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   </p>
   </details>
 
-  `KSHELL` is now compiled and ready to use. See a section further down in this readme for instructions on how to run `KSHELL`.
-
+  If the output of your terminal is like the expected terminal output listed above then `KSHELL` is compiled correctly and is ready to use. See a section further down in this readme for instructions on how to run `KSHELL`. If your terminal reports that the command `gfortran` cannot be found then you need to correctly edit your `~/kshell/src/Makefile` with `FC = <correct gfortran command>`. It might be `gfortran`, `gfortran-10`, `gfortran-11` or something similar. To check, type the command directly into your terminal, hit enter, and see if your terminal can find the command:
+  ```
+  gfortran
+  > gfortran: command not found
+  ```
+  means that `gfortran` is not a valid command. However:
+  ```
+  gfortran-12
+  > gfortran-12: fatal error: no input files
+  > compilation terminated.
+  ```
+  allthough fatal, means that the command `gfortran-12` is a valid command. Edit the `~/kshell/src/Makefile` with `FC = gfortran-12` in this case.
+  
+  
+  Another possible problem is that your terminal reports this:
+  ```
+  ld: library not found for -llapack
+  collect2: error: ld returned 1 exit status
+  make: *** [kshell.exe] Error 1
+  ```
+  This means that `lapack` is either not installed or not in your `LIBRARY_PATH`. `brew install lapack` should solve this problem. Same for `openblas`. When you now try to compile `KSHELL` again, make sure to clean first:
+  ```
+  make clean
+  make
+  ```
   </p>
   </details>
 
@@ -459,37 +501,44 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   <summary>General usage</summary>
   <p>
 
-  We will here use 20Ne as an example. Create a directory where you want to place the output from `KSHELL`. cd to that directory and run
+  We will here use 20Ne as an example. Create a directory where you want to place the **results** from `KSHELL`. Note that this directory should be at a separate location from where you installed `KSHELL`. For example, create a directory in your home and enter the newly created directory:
   ```
-  python <kshell_install_directory>/bin/kshell_ui.py
+  cd ~/
+  mkdir -p kshell_results/ne20
+  cd kshell_results/ne20
   ```
-  You will now be asked whether you want to use `MPI` or not. `MPI` is used for parallelization over multiple nodes. The parallelization over several cores per CPU is administered by `OpenMP` and is active even though you do not choose `MPI` here. For a regular PC, choose `n`. For running on the Fram supercomputer, choose `fram`:
+  I use the name `ne20` and not `20ne` because some applications, like Python, do not support variable, function, etc. naming with numbers at the start, and I'm trying to be consise and consequent. Note that you now have an install directory: `~/kshell` and a result directory: `~/kshell_results` in your home. Be sure that you understand the difference between these two directories. The former is the location of the actual `KSHELL` program files, and the latter is the location where you wish to place the results from your `KSHELL` calculations. Don't mix these up. You woldn't place your Word documents inside the installation folder of Microsoft Office, would you? Now, inside the **results directory** for 20Ne `~/kshell_results/ne20`, initialise the `KSHELL` setup process by running the command:
+  ```
+  python ~/kshell/bin/kshell_ui.py
+  ```
+  This will start the preparations for your 20Ne calculation where you will be asked a series of questions. First, you'll be asked whether you want to use `MPI` (Message Parsing Interface) or not. `MPI` is used for parallelization over multiple nodes (computers) and is mainly applicable for running `KSHELL` on supercomputers. Parallelization over several cores per node is administered by `OpenMP` and is active even though you do not choose `MPI` here. For a regular PC, choose `n`:
   ```
   MPI parallel? Y/N/preset, n nodes (default: N,  TAB to complete) : n
   ```
-  You are now asked to choose the model space. 20Ne has 10 protons and 10 neutrons which makes the doubly magic 8p 8n core suitable for the inert core. 0d5/2, 1s1/2 and 0d3/2 will then be the model space where the valence nucleons can move about. This is the `USD` model space. Take a look at [this figure](https://periodic-table.org/wp-content/uploads/2019/05/Shell-model-of-nucleus.png) and see if you agree (note the different notation conventions, nlj and (n+1)lj (N = 2n + l)). We choose `usda.snt` for this input.
+  You are now asked to choose the model space you wish to use. 20Ne has 10 protons and 10 neutrons which makes the doubly magic 8p 8n core suitable for the inert core. 0d5/2, 1s1/2 and 0d3/2 will then be the model space where the valence nucleons can move about. This is the `USD` model space. Take a look at [this figure](https://periodic-table.org/wp-content/uploads/2019/05/Shell-model-of-nucleus.png) and see if you agree (note the different notation conventions, nlj and (n+1)lj (N = 2n + l)). We choose `usda.snt` for this example.
   ```
   model space and interaction file name (.snt)
   (e.g. w or w.snt,  TAB to complete) : usda.snt
   ```
-  Now we specify the nuclide. Here you may enter either the number of valence protons and neutrons or the isotope abbreviation (20ne or ne20). 20Ne has 2 valence protons and 2 valence neutrons outside the 8p 8n core, so the input may either be `2, 2` or `20ne`:
+  Now we specify the nuclide. Here you may enter either the number of valence protons and neutrons or the isotope abbreviation (20ne or ne20, upper or lower case does not matter). 20Ne has 2 valence protons and 2 valence neutrons outside the 8p 8n core, so the input may either be `2, 2` or `ne20`:
   ```
   number of valence protons and neutrons
-  (ex.  2, 3 <CR> or 9Be <CR>)    <CR> to quit : 2,2
+  (ex.  2, 3 <CR> or 9Be <CR>)    <CR> to quit : ne20
   ```
-  We are now prompted for the name of the executable shell script. Press the return key for the default name:
+  We are now prompted for the name of the executable shell script. Press the enter key for the default name:
   ```
   name for script file (default: Ne20_usda ):
   ```
-  Choose which spin states you want to calculate and how many. The default value is to calculate the 10 lowest lying states. See a section later in this document on details:
+  Choose which angular momentum levels you want to calculate and how many. The default value is to calculate the 10 lowest lying levels. See a section later in this document on how to choose specific angular momenta and parities. For this example we choose the default value (just press enter):
   ```
-  J, parity, number of lowest states
-    (ex. 10          for 10 +parity, 10 -parity states w/o J-proj. (default)
-        -5           for lowest five -parity states,
-        0+3, 2+1     for lowest three 0+ states and one 2+ states,
-        1.5-1, 3.5+3 for lowest one 3/2- states and three 7/2+ states) :
+  J, parity, number of lowest levels
+    (ex. 10          for 10 +parity, 10 -parity levels w/o J-proj. (default)
+        -5           for lowest five -parity levels,
+        0+3, 2+1     for lowest three 0+ levels and one 2+ levels,
+        1.5-1, 3.5+3 for lowest one 3/2- levels and three 7/2+ levels
+        range        for a range of levels) :
   ```
-  We are now asked for truncation information. The model space is small and the number of nucleos is low, so we dont need to truncate this system. The default is no truncation. 20Ne in the `USD` model space only allows positive parity states, so we are only asked for truncation of the positive parity states. See a section later in this document for truncation details:
+  We are now asked for truncation information. The model space is small and the number of nucleos is low, so we dont need to truncate this system. The default is no truncation. 20Ne in the `USD` model space only allows positive parity levels, so we are only asked for truncation of the positive parity levels. See a section later in this document for truncation details. Choose the default value of no truncation:
   ```
   truncation for "+" parity state in  Ne20_usda_p.ptn
   truncation scheme ?
@@ -499,30 +548,39 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
         3 : Both (1) and (2)
 
   ```
-  At this point we are asked whether we want to edit any other parameters, like the proton and neutron effective charges, the gyroscopic spin factor and the number of Lanczos iterations. Leave this to the default values:
+  At this point we are asked whether we want to edit any other parameters, like the proton and neutron effective charges, the gyroscopic spin factor and the number of Lanczos iterations. Change these to your needs (tab complete is supported). In this demo, we'll leave them to the default values:
   ```
-  --- input parameter ---
-    beta_cm = 0.0
-    eff_charge = 1.5, 0.5,
-    gl = 1.0, 0.0,
-    gs = 5.585, -3.826,
-    hw_type = 2
-    max_lanc_vec = 200
-    maxiter = 300
-    mode_lv_hdd = 0
-    n_block = 0
-    n_restart_vec = 10
+  Modify parameters?
+  Example: maxiter = 300 for parameter change or <CR> for no more modification.
+  Available paramters are:
+  ['max_lanc_vec', 'maxiter', 'n_restart_vec', 'hw_type', 'mode_lv_hdd', 'n_block', 'eff_charge', 'gl', 'gs', 'beta_cm', 'fn_int', 'is_obtd', 'is_ry_sum', 'is_calc_tbme', 'sq', 'quench', 'is_tbtd']
 
-  modify parameter?
-  (e.g.  maxiter = 300 for parameter change
-          <CR>          for no more modification ) :
+
+ --- set parameters ---
+  beta_cm = 0.0
+  eff_charge = 1.5, 0.5,
+  gl = 1.0, 0.0,
+  gs = 5.585, -3.826,
+  hw_type = 2
+  max_lanc_vec = 200
+  maxiter = 300
+  mode_lv_hdd = 0
+  n_block = 0
+  n_restart_vec = 10
+
+  :
   ```
-  Then, the transition probabilities are calculated by default, but you can omit these calculations here. Choose the default value:
+  The transition probabilities are calculated by default, but they can be omitted. For this example we want to calculate the transition probabilities, so please select `y`:
   ```
   compute transition probabilities (E2/M1/E1) for
-      Ne20_usda ? Y/N (default: Y) :
+      Ne20_usda ? Y/N (default: Y) : y
   ```
-  Now you may repeat the process and input parameters for another nuclide. Press return to skip this step and to finish the script setup process. The directory should now include these files:
+  Now you may repeat the process and add parameters for another nuclide (per 2022-08-29 only one nuclide is supported at a time so the program will crash if you try to add an additional nuclide). Press enter to skip this step. For the last step you are asked if you want to split the commands into separate shell scripts. This is handy for running very large calculations on supercomputers, but not for running smaller calculations on single PCs. We'll choose `n`: 
+  ```
+  Split shell files? y/n (default: n): n
+  Setup complete. Exiting...
+  ```
+  At this point the preparations before running the actual calculations are complete. Your data directory `~/kshell_results/ne20` should now contain these files:
 
   ```
   Ne20_usda.sh
@@ -534,7 +592,7 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   transit.exe
   usda.snt
   ```
-  Run `KSHELL` with these parameters by:
+  See file descriptions later in this document if you want to know what they all do. Run your 20Ne `KSHELL` calculation by:
   ```
   ./Ne20_usda.sh
   ```
@@ -542,8 +600,9 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   ```
   start running log_Ne20_usda_m0p.txt ...
   start running log_Ne20_usda_tr_m0p_m0p.txt ...
-  Finish computing Ne20_usda.    See summary_Ne20_usda.txt
+  Finish computing Ne20_usda.
   ```
+  Congrats! You have just performed your first `KSHELL` calculation! To use these results, please se the *General usage* section later in this document.
 
   </p>
   </details>
@@ -551,38 +610,32 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   <!-- #### How to choose spin and parity states -->
 
   <details>
-  <summary>How to choose spin and parity states</summary>
+  <summary>How to choose spin and parity levels</summary>
   <p>
   
-  `kshell_ui.py` asks you to choose what spin and parity states you want to calculate:
+  `kshell_ui.py` asks you to choose what spin and parity levels you want to calculate:
   ```
-  J, parity, number of lowest states
-    (ex. 100          for 100 +parity, 100 -parity states w/o J-proj. (default)
-        -5           for lowest five -parity states,
-        0+3, 2+1     for lowest three 0+ states and one 2+ states,
-        1.5-1, 3.5+3 for lowest one 3/2- states and three 7/2+ states) :
+  J, parity, number of lowest levels
+    (ex. 100          for 100 +parity, 100 -parity levels w/o J-proj. (default)
+        -5           for lowest five -parity levels,
+        0+3, 2+1     for lowest three 0+ levels and one 2+ levels,
+        1.5-1, 3.5+3 for lowest one 3/2- levels and three 7/2+ levels)
+        range        for a range of levels) :
   ```
   * Entering an integer `N` will ask `KSHELL` to produce the `N` lowest lying energy levels, regardless of spin and parity. Example: Inputting `1337` will produce the 1337 lowest lying energy levels.
-  * Prepending a plus sign (`+`) or a minus sign (`-`) to the integer will specify which parity you want to calculate the levels for. Note that your chosen nuclide and model space might only be able to produce either positive or negative parity states. Example: `+1337` will produce the 1337 lowest lying positive parity levels.
+  * Prepending a plus sign (`+`) or a minus sign (`-`) to the integer will specify which parity you want to calculate the levels for. Note that your chosen nuclide and model space might only be able to produce either positive or negative parity levels. Example: `+1337` will produce the 1337 lowest lying positive parity levels.
   * You can request the `N` lowest lying levels of a specific spin and parity. Example: `0+3` will produce the three lowest lying levels with spin 0 and positive parity.
-  * You can request several different specific spin and parity states. Example: `1.5-1, 3.5+3` will produce the lowest lying state of spin 3/2 and negative parity, as well as the three lowest lying states of spin 7/2 and positive parity.
-
-  It can be tedious to manually input a lot of specific requests to `kshell_ui.py`. You can use `kshell_utilities` to quickly generate the correct spin, parity and number of states input. To generate input for the 100 lowest lying levels for all spins from 0 including 3 for both parities:
-  ``` python
-  >>> import kshell_utilities as ksutil
-
-  >>> ksutil.generate_states(
-      start = 0,
-      stop = 3,
-      n_states = 100,
-      parity = "both"
-  )
+  * You can request several different specific spin and parity levels. Example: `1.5-1, 3.5+3` will produce the lowest lying level of spin 3/2 and negative parity, as well as the three lowest lying levels of spin 7/2 and positive parity.
+  * The `range` functionality lets you easily select `N` levels for a range of different angular momenta. Any invalid choice will be filtered away, like choosing integer angular momenta for a nucleus of half integer angular momenta, or choosing a parity which the interaction does not support. In the following example we select 10 positive parity levels for angular momenta 0, 1, 2, and 3:
+    
   ```
-  which outputs:
-  ``` python
-  0+100, 0.5+100, 1+100, 1.5+100, 2+100, 2.5+100, 3+100, 0-100, 0.5-100, 1-100, 1.5-100, 2-100, 2.5-100, 3-100
+range
+Start spin: 0
+End spin (included): 3
+Number of states per spin: 10
+Parity (+, -, both): +
+Chosen states: ['0+10', '1+10', '2+10', '3+10']
   ```
-  Note that the output has a spin step length of 1/2. `kshell_ui.py` will filter out the states which are not valid for the given model space and nuclide, so just paste the entire string into the `kshell_ui.py` prompt.
 
   </p>
   </details>
@@ -593,7 +646,7 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   <summary>How to calculate the dimensionality</summary>
   <p>
 
-  After answering all the questions from `kshell_ui.py` it might be reasonable to check the dimensionality of the configuration to see if your computer will actually manage to solve the calculations. At this point, the work folder will look something like this:
+  After answering all the questions from `kshell_ui.py` it might be reasonable to check the dimensionality of the configuration to see if your computer will actually manage to solve the calculations. At this point, the results directory will look something like this:
   ```
   Ne20_usda.sh
   Ne20_usda_p.ptn
@@ -1103,8 +1156,22 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   <summary>KSHELL file descriptions</summary>
   <p>
 
-  #### \*.wav
+  #### .sh
+  The `.sh` file(s) is (are) generated by `kshell_ui` and contain the run commands for `KSHELL`. This is the file you run to start `KSHELL`.
+  #### .wav
   The `.wav` files are generated after running the `KSHELL` executable. They contain the eigenvectors of the Hamiltonian matrix and are used to compute the transition probabilities.
+  #### .snt
+  The `.snt` files contain the parameters for each of the interactions. For example `usda.snt`, `gxpf1a.snt` etc. They are located in `<install_directory>/snt` and after completing the `kshell_ui` setup, the chosen interaction file is copied to the run directory.
+  #### .ptn
+  The `.ptn` files are generated by `kshell_ui` and contain the possible proton and neutron configurations of the chosen model space and nucleus with the chosen truncation.
+  #### .exe
+  The `.exe` files are the compiled executable program files. These are generated by the compilation process and are located in `<install_directory>/src`. They are copied to the run directory after the `kshell_ui` setup.
+  #### .input
+  The `.input` files contain run parameters for the `.exe` files. They are deleted after a successful calculation. If you see such a file in your run directory after the program has terminated, then something went wrong during the calculation.
+  #### log\_\*.txt
+  There are log files for level information and separate log files for transition information. The log files contain all level and transition information from `KSHELL` in addition to debug parameters like RAM usage, time usage, and much more. If specific angular momenta were chosen during the `kshell_ui` setup, then there will be one level log file for each of the angular momentum choices; if you also chose to calculate transition probabilities then there will be one transition log file for each unique initial angular momentum and initial parity to final angular momentum and final parity pair. If you chose just a number of levels without specifying any angular momenta, then there will be only one level log file and one transition log file.
+  #### summary\_\*.txt
+  When running `KSHELL` whithout splitting the executable into several `.sh` files, all log files will be gathered into a single summary file. If the executables are split, then you must use `kshell_utilities.collect_logs()` manually to compile the log files into a summary file. The summary file is then read with `kshell_utilities.loadtxt()`.
 
   </p>
   </details>
