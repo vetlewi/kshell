@@ -217,7 +217,7 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   ```
   apt search openblas
   ```
-  and try a few different versions to see which one works. You check that the version is correct by compiling `KSHELL`. Instructions on this below.
+  and try a few different versions to see which one works. You check that the version is correct by compiling `KSHELL` and seeing whether the compile completes or not. Compilation instructions are following.
 
   #### Python
   For installing the correct version of Python, it is highly recommended to install an environment management system like `miniconda` as to not mess up any other Python dependencies your system has, and to easily download the exact version needed. Start by downloading the latest release of `miniconda` ([alternative downloads here](https://docs.conda.io/en/latest/miniconda.html)):
@@ -228,33 +228,33 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   ```
   bash Miniconda3-latest-Linux-x86_64.sh
   ```
-  Accept the ToS. Choose all default settings except when the installer asks if it should initialize by running conda init. Choose yes. If you have trouble with initializing conda, for example
+  Accept the terms of service. Choose all default settings except when the installer asks if it should initialize by running conda init. Choose yes. If you have trouble with initializing conda, for example
   ```
   > conda
   conda: command not found
   ```
-  cd to `<install_location>/anaconda3/bin` and initialize conda from there. If you for example use `fish` instead of `bash` (you should!), then initialize with
+  cd to `<install_location>/anaconda3/bin` and initialize conda from there (replace `<install_location>` with the path to where you downloaded the file `Miniconda3-latest-Linux-x86_64.sh`). If you for example use `fish` instead of `bash` (you should!), then initialize with
   ```
   ./conda init fish
   ```
-  When the initialization is complete, create an environment named `kshell` with `Python 3.8` along with `numpy` and `matplotlib`:
+  At this point, please close your terminal and open a new one. When the initialization is complete, create an environment named `kshell` with `Python 3.10` with:
   ```
-  conda create --name kshell python=3.8 numpy matplotlib
+  conda create --name kshell python=3.10
   ```
   Activate the environment with:
   ```
   conda activate kshell
   ```
-  Note that any additional Python package can be installed normally with `pip`. The `kshell` environment is only active within your terminal session and does not interfere with any other Python dependencies on your system.
+  Note that any additional Python packages may be installed normally with `pip`. You do not have to type `pip3` or `python3` because conda maps `pip` and `python` to the requested version of Python. The `kshell` environment is only active within your terminal session and does not interfere with any other Python dependencies on your system. This is one of the main reasons why I recommend using an environment manager. Should you at any time in the future need a different version of Python (newer or older), simply create a conda environment with the appropriate Python version. You can see the currently active conda environment in the bottom right or left corner of your terminal. The default environment is called `(base)` and if you have followed these instructions you will see that the active environment is `(kshell)`.
 
-  Alternatively, download `Python 3.8` with the Ubuntu packet manager.
+  As an alternative to using the forementioned conda approach, you can download `Python 3.10` with your distro's appropriate packet manager. Use `apt search python` to find the correct name of Python version 3.10 or newer.
 
   #### Compile KSHELL
   We are now ready to actually install `KSHELL`. Navigate to the directory where you want to install `KSHELL` and clone this repository:
   ```
   git clone https://github.com/GaffaSnobb/kshell.git
   ```
-  Navigate to the `src/` directory and edit the `Makefile` with your favorite editor. Change `FC = gfortran` to `FC = gfortran-10` (or `-11` if you installed version 11) and make sure that line is un-commented. All other `FC` declarations should be commented. Save the changes. Still in the `src/` directory, run
+  When the clone is successful use `ls` to see that you have a new directory called `kshell`. Navigate to the `kshell/src/` directory and edit the `Makefile` with your favorite editor. Change `FC = gfortran` to `FC = gfortran-10` (or `-11` if you installed version 11) and make sure that line is un-commented. All other `FC` declarations should be commented or deleted. Save the changes. Still in the `src/` directory, run
   ```
   make
   ```
@@ -318,8 +318,8 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
 
   </p>
   </details>
-
-  `KSHELL` is now compiled and ready to use. See a section further down in this readme for instructions on how to run `KSHELL`.
+  
+  If the output of your terminal is like the expected terminal output listed above then `KSHELL` is compiled correctly and ready to use. See a section further down in this readme for instructions on how to run `KSHELL`. If your terminal reports that the command `gfortran` cannot be found then you need to correctly edit your `Makefile` with `FC = <correct gfortran command>`. It might be `gfortran`, `gfortran-10`, `gfortran-11` or something similar.
 
   </p>
   </details>
@@ -331,7 +331,7 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   <p>
 
   #### Homebrew
-  `Homebrew` is a packet manager for macOS similar to `apt` for Ubuntu and frankly, every (soon to be) scientist using macOS should have `Homebrew` installed. Install with ([see detailed install instructions here](https://brew.sh)):
+  `Homebrew` is a packet manager for macOS similar to `apt` for Ubuntu and frankly, every scientist using macOS should have `Homebrew` installed. Install with ([or see detailed install instructions here](https://brew.sh)):
   ```
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   ```
@@ -341,51 +341,70 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   ```
   brew install gfortran
   ```
-  and check that the version is equal to or greater than 10.2.0 by:
+  and check that the version is equal to or greater than 10.2.0 by (version x.y.z with x > 10 should also be fine):
   ```
   gfortran --version
   ```
 
   #### Python
-  For installing the correct version of Python, it is highly recommended to install an environment management system like `miniconda` as to not mess up any other Python dependencies your system has, and to easily download the exact version needed. Start by downloading the latest release of `miniconda` ([alternative downloads here](https://docs.conda.io/en/latest/miniconda.html)):
+  For installing the correct version of Python, it is highly recommended to install an environment management system like `miniconda` as to not mess up any other Python dependencies your system has, and to easily download the exact version needed. Start by `cd`ing to your downloads directory with
+  ```
+  cd ~/Downloads
+  ```
+  and download the latest release of `miniconda` ([alternative downloads here](https://docs.conda.io/en/latest/miniconda.html)) by:
   ```
   wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
   ```
-  Run the installer:
+  Then, run the installer which you just downloaded with:
   ```
   bash Miniconda3-latest-MacOSX-x86_64.sh
   ```
-  Accept the ToS. Choose all default settings except when the installer asks if it should initialize by running conda init. Choose yes. Remember to close and re-open your terminal session for the conda installation to function properly. If you have trouble with initializing conda, for example
+  Follow the on-screen instructions and accept the terms of service. Choose all default settings except when the installer asks if it should initialize by running conda init. For that option select yes. After the installation is complete, close and re-open your terminal session for the conda installation to function properly. Check that conda has been installed by running the command `conda`. If a helpful description of conda shows up in your terminal then the installation is complete. However, if you see
   ```
   > conda
   conda: command not found
   ```
-  cd to `<install_location>/anaconda3/bin` and initialize conda from there. If you for example use `fish` instead of `bash` (you should!), then initialize with
+  then conda has not been installed properly. To fix this, `cd` to `<install_location>/anaconda3/bin` and initialize conda from there. Replace `<install_location>` with the path to where you downloaded the file `Miniconda3-latest-Linux-x86_64.sh` which should be `~/Downloads` if you followed these instructions. Then, initialise conda with:
   ```
-  ./conda init fish
+  ./conda init bash
   ```
-  When the initialization is complete, create an environment named `kshell` with `Python 3.8` along with `numpy` and `matplotlib`:
+  Replace `bash` if you are using a different shell, for example `zsh` or `fish` to mention a few. Close your terminal and open a new session, then run the command `conda` once more to see that the installation is proper. When the initialization is complete, create an environment named `kshell` with `Python 3.10`:
   ```
-  conda create --name kshell python=3.8 numpy matplotlib
+  conda create --name kshell python=3.10
   ```
   Activate the environment with:
   ```
   conda activate kshell
   ```
-  Note that any additional Python package can be installed normally with `pip`. The `kshell` environment is only active within your terminal session and does not interfere with any other Python dependencies on your system.
+  Note that any additional Python packages may be installed normally with `pip`. You do not have to type `pip3` or `python3` because conda maps `pip` and `python` to the requested version of Python. For example, to install `numpy`, simply run:
+  ```
+  pip install numpy
+  ```
+  The `kshell` environment is only active within your terminal session and does not interfere with any other Python dependencies on your system. You can see the currently active conda environment in the bottom right or left corner of your terminal. The default environment is called `(base)` and if you have followed these instructions you will see that the active environment is `(kshell)`. This is one of the main reasons why I recommend using an environment manager. You may mess around however much you like inside of any conda environment **other than** `base` without having to worry about a thing. Should you at any time in the future need a different version of Python (newer or older), simply create a conda environment with the appropriate Python version.
+  
+  You: I need Python 2.7 to run some old code. Lets open the good ole' terminal.
+  Apple: Tough luck. 2.7 is not included in newer versions of macOS.
+  You: But wait... I have conda!
+  ```
+  conda create --name <name of environment here> python=2.7
+  conda activate <name of environment here>
+  python --version
+  > Python 2.7.18
+  ```
+  You: Noice!
 
-  Alternatively, download `Python 3.8` with `brew`.
+  As an alternative to using the forementioned conda approach, you can download `Python 3.10` with `brew`. Use `brew search python` to find the correct name of Python version 3.10 or newer and then use `brew install <correct name>` to install it. Note that you may have to use `python3.10 myfile.py` to actually use version 3.10.
 
   #### Compile KSHELL
-  We are now ready to actually install `KSHELL`. Navigate to the directory where you want to install `KSHELL` and clone this repository:
+  We are now ready to actually compile (install) `KSHELL`. Navigate to the directory where you want to install `KSHELL`. This guide assumes that you use your home directory (`cd ~/`) but you may use another path if you'd like. Note that you do not need to create a directory called kshell (or whatever), because such a directory will be created during the installation. In your home directory, clone this repo with the command:
   ```
   git clone https://github.com/GaffaSnobb/kshell.git
   ```
-  Navigate to the `src/` directory and run
+  which copies all the needed files to your home inside a directory called `kshell`. `cd` to the `~/kshell/src/` directory and run the command
   ```
   make
   ```
-  to compile. The output should be something like this (mismatch warnings are normal):
+  to compile `KSHELL`. The output should be something like this (mismatch warnings are normal):
   
   <details>
   <summary>Click to see normal terminal output</summary>
@@ -446,8 +465,13 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   </p>
   </details>
 
-  `KSHELL` is now compiled and ready to use. See a section further down in this readme for instructions on how to run `KSHELL`.
-
+  If the output of your terminal is like the expected terminal output listed above then `KSHELL` is compiled correctly and ready to use. See a section further down in this readme for instructions on how to run `KSHELL`. If your terminal reports that the command `gfortran` cannot be found then you need to correctly edit your `~/kshell/src/Makefile` with `FC = <correct gfortran command>`. It might be `gfortran`, `gfortran-10`, `gfortran-11` or something similar. To check, type the command directly into your terminal, hit enter, and see if your terminal can find the command. If your terminal reports something like
+  ```
+  ld: library not found for -llapack
+  collect2: error: ld returned 1 exit status
+  make: *** [kshell.exe] Error 1
+  ```
+  then `lapack` is either not installed or not in your `LIBRARY_PATH`. `brew install lapack` should solve this problem. Same for `openblas`.
   </p>
   </details>
 
