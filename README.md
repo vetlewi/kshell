@@ -1050,6 +1050,8 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   </p>
   </details>
 
+  ##### Create a level plot / level scheme
+
   To generate a level plot:
   ``` python
   ne20.level_plot()
@@ -1092,6 +1094,8 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   </p>
   </details>
 
+  ##### Create a gamma strength function plot
+  
   The gamma strengh function (averaged over total angular momenta and parities) can easily be calculated in several ways. The quickest way is
   ``` python
     ne20.gsf()
