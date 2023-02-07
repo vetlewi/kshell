@@ -465,13 +465,31 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   </p>
   </details>
 
-  If the output of your terminal is like the expected terminal output listed above then `KSHELL` is compiled correctly and is ready to use. See a section further down in this readme for instructions on how to run `KSHELL`. If your terminal reports that the command `gfortran` cannot be found then you need to correctly edit your `~/kshell/src/Makefile` with `FC = <correct gfortran command>`. It might be `gfortran`, `gfortran-10`, `gfortran-11` or something similar. To check, type the command directly into your terminal, hit enter, and see if your terminal can find the command. Another possible problem is that your terminal reports this:
+  If the output of your terminal is like the expected terminal output listed above then `KSHELL` is compiled correctly and is ready to use. See a section further down in this readme for instructions on how to run `KSHELL`. If your terminal reports that the command `gfortran` cannot be found then you need to correctly edit your `~/kshell/src/Makefile` with `FC = <correct gfortran command>`. It might be `gfortran`, `gfortran-10`, `gfortran-11` or something similar. To check, type the command directly into your terminal, hit enter, and see if your terminal can find the command:
+  ```
+  gfortran
+  > gfortran: command not found
+  ```
+  means that `gfortran` is not a valid command. However:
+  ```
+  gfortran-12
+  > gfortran-12: fatal error: no input files
+  > compilation terminated.
+  ```
+  allthough fatal, means that the command `gfortran-12` is a valid command. Edit the `~/kshell/src/Makefile` with `FC = gfortran-12` in this case.
+  
+  
+  Another possible problem is that your terminal reports this:
   ```
   ld: library not found for -llapack
   collect2: error: ld returned 1 exit status
   make: *** [kshell.exe] Error 1
   ```
-  This means that `lapack` is either not installed or not in your `LIBRARY_PATH`. `brew install lapack` should solve this problem. Same for `openblas`.
+  This means that `lapack` is either not installed or not in your `LIBRARY_PATH`. `brew install lapack` should solve this problem. Same for `openblas`. When you now try to compile `KSHELL` again, make sure to clean first:
+  ```
+  make clean
+  make
+  ```
   </p>
   </details>
 
