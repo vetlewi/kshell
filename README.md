@@ -1484,6 +1484,10 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   ```
 
   and the parameters are described in [the docstring](https://github.com/GaffaSnobb/kshell-utilities/blob/ab0d7f9b261692a412d50508c6c66349f7208862/kshell_utilities/kshell_utilities.py#L1008).
+
+
+  
+  If you wonder what all of this stuff might mean, check out [my masters thesis](https://github.com/GaffaSnobb/master-tasks/blob/main/doc/masters_thesis_final.pdf).
   </p>
   </details>
   
