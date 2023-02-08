@@ -1460,7 +1460,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
 
   ##### The Porter-Thomas distribution
 
-  We can't mention gBA without mentioning the Porter-Thomas distribution. The following code will plot histogram of B values (reduced transition probabilities) from selections of Ei values (thanks to Jørgen Midtbø for creating the figure from which the following is heavily inspired from):
+  We can't mention gBA without mentioning the Porter-Thomas distribution. The following code will plot a histogram of B values (reduced transition probabilities) from selections of Ei values (thanks to Jørgen Midtbø for creating the figure from which the following is heavily inspired):
 
   ```python
   sc44.porter_thomas_Ei_plot(
@@ -1475,7 +1475,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
 
   [The docstring of this function](https://github.com/GaffaSnobb/kshell-utilities/blob/ab0d7f9b261692a412d50508c6c66349f7208862/kshell_utilities/kshell_utilities.py#L743) explains in detail what all the parameters are. A similar plot but analysed for total angular momentum instead of excitation energy can be created by:
 
-  ```
+  ```python
   sc44.porter_thomas_j_plot(
     Ex_max = EX_MAX,
     Ex_min = EX_MIN,
