@@ -1266,6 +1266,10 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
     ax.legend()
     plt.show()
   ```
+  The function call `ksutil.latex_plot()` makes your plots look nicer by making it "Latex style", whatever that means. Well, it actually means changing a few fonts and sizes, and you can see [the exact code here](https://github.com/GaffaSnobb/kshell-utilities/blob/ab0d7f9b261692a412d50508c6c66349f7208862/kshell_utilities/parameters.py#L11). It looks much prettier than default `matplotlib` and it fits right into your thesis. The line `ksutil.flags["debug"] = True` makes `kshell-utilities` be more verbose and can help you resolve issues. If you ever get tired of the terminal output you can set it to `False`.
+  
+  
+  
   Run `sc44.py` again now and let it think for a few seconds. You should see a bunch of debug information like so:
   
   <details>
@@ -1320,12 +1324,166 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   </p>
   </details>
 
-  and you'll se a nice GSF plot with both experimental values and `KSHELL` calculations.
+  and you'll se a nice GSF plot with both experimental values and `KSHELL` calculations. But, hold on... There is something strange about this plot...
 
 
-  BREAKING NEWS: Ola Nordmann (43) was SHOCKED when he discovered why there is such a big difference between the experimental data and the calculated GSF of 44Sc. [Read the full story here!](https://github.com/GaffaSnobb/master-tasks/blob/main/doc/masters_thesis_final.pdf).
+  BREAKING NEWS: Ola Nordmann (43) was SHOCKED when he discovered why there is such a big difference between the experimental data and the calculated GSF of 44Sc. [Read the full story here!](https://github.com/GaffaSnobb/master-tasks/blob/main/doc/masters_thesis_final.pdf)
 
 
+  Note that when you run `sc44.py` again it is much faster than the first run. If you peek inside the `tmp` directory you'll see that there are now additional files there. The GSF has been stored as binary `numpy` arrays and it does not have to be re-calculated during subsequent runs of the program. This means that you can make all your millions of tiny plot adjustments without waiting for a long time to show the changes. Neat, eh? Note also that if you change any of the parameters of the GSF, like `bin_width`, `Ex_min` and `Ex_max`, then `kshell-utilities` will understand that this is a different calculation from your previous one and it will perform new calculations and save these as binary `numpy` arrays too. These saved `.npy` GSF files only take up a few hundred bytes so don't worry about storing many different calculations (the saved `.npy` files of the transition calculations from `KSHELL` however can take several hundred megabytes but these are only generated once per `KSHELL` calculation).
+
+  ```
+  > python sc44.py
+  Summary data loaded from .npy! Use loadtxt parameter load_and_save_to_file = 'overwrite' to re-read data from the summary file.
+  loadtxt_time = 0.1136299180216156 s
+  Sc44 M1 GSF data loaded from .npy!
+  Sc44 E1 GSF data loaded from .npy!
+  ```
+
+  ##### Level density as a function of energy, angular momentum, and parity
+
+  Let's look at some other fancy stuff, shall we? When I made the following functionality my intentions were to study how the total angular momentum distribution looked like with regards to energy. The result however turned out to be a level density heatmap where the level density is plotted as a function of total angular momentum, energy, and parity. Still a nice result, but the name of the function is a bit off. Add this to your code and run it:
+
+  ```python
+  sc44.angular_momentum_distribution_plot(
+    bin_width = 1,
+    E_min = EX_MIN,
+    E_max = 15,
+    filter_parity = "+",
+    save_plot = False,
+    # j_list = [0, 2, 4, 7]
+  )
+  ```
+
+  You can specify a selection of total angular momenta with the `j_list` parameter. Note that `E_min` and `E_max` do not mean the exact same thing as `Ex_min` and `Ex_max`. 
+
+  ##### What effect does the number of levels have?
+  Have you ever lay awake at night, wondering about what the hell would happen if you changed the number of levels per angular momentum and per parity in your `KSHELL` calculations? Me too! Lets stop wondering:
+  
+  ```python
+  n_levels = [60, 100, 200]
+  colors = ["cyan", "dodgerblue", "blue"]
+  fig_0, ax_0 = plt.subplots()
+  fig_1, ax_1 = plt.subplots()
+
+  for levels, color in zip(n_levels, colors):
+    bins_gsf_E1, gsf_E1 = sc44.gsf(
+      bin_width = BIN_WIDTH,
+      Ex_min = EX_MIN,
+      Ex_max = EX_MAX,
+      multipole_type = "E1",
+      include_n_levels = levels,
+      plot = False
+    )
+    ax_0.step(bins_gsf_E1, gsf_E1, label=f"{levels} levels per " + r"$j^{\pi}$", color=color)
+
+    bins_nld, nld = sc44.nld(
+      bin_width = BIN_WIDTH,
+      include_n_levels = levels,
+      plot = False
+    )
+    ax_1.step(bins_nld, nld, label=f"{levels} levels per " + r"$j^{\pi}$", color=color)
+  
+  ax_0.set_yscale('log')
+  ax_0.set_xlabel(r"$E_{\gamma}$ [MeV]")
+  ax_0.set_ylabel(r"GSF [MeV$^{-3}$]")
+  ax_0.legend()
+
+  ax_1.set_xlabel(r"$E$ [MeV]")
+  ax_1.set_ylabel(r"NLD [MeV$^{-1}$]")
+  ax_1.legend()
+  plt.show()
+  ```
+
+  ##### A small generalised Brink-Axel test
+  This one is a real treat! Do you wonder if the gBA holds for your `KSHELL` calculations? This might shed some light on the matter:
+
+  ```python
+  fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(6.4, 4.8*2))
+  j_list = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+  n_j = len(j_list)
+
+  bins_M1_all_j, gsf_M1_all_j = sc44.gsf(
+    bin_width = BIN_WIDTH,
+    Ex_min = EX_MIN,
+    Ex_max = EX_MAX,
+    multipole_type = "M1",
+    plot = False,
+  )
+  bins_E1_all_j, gsf_E1_all_j = sc44.gsf(
+    bin_width = BIN_WIDTH,
+    Ex_min = EX_MIN,
+    Ex_max = EX_MAX,
+    multipole_type = "E1",
+    plot = False,
+  )
+  ax[0].plot(bins_M1_all_j, gsf_M1_all_j, color="black", label=r"All $j_i$")
+  ax[1].plot(bins_E1_all_j, gsf_E1_all_j, color="black", label=r"All $j_i$")
+
+  for i in range(n_j):
+    bins_M1_one_j, gsf_M1_one_j = sc44.gsf(
+      bin_width = BIN_WIDTH,
+      Ex_min = EX_MIN,
+      Ex_max = EX_MAX,
+      multipole_type = "M1",
+      partial_or_total = "partial",
+      filter_spins = [j_list[i]],
+      plot = False,
+    )
+    bins_E1_one_j, gsf_E1_one_j = sc44.gsf(
+      bin_width = BIN_WIDTH,
+      Ex_min = EX_MIN,
+      Ex_max = EX_MAX,
+      multipole_type = "E1",
+      partial_or_total = "partial",
+      filter_spins = [j_list[i]],
+      plot = False,
+    )
+    ax[0].plot(bins_M1_one_j, gsf_M1_one_j, color="black", alpha=0.2)
+    ax[1].plot(bins_E1_one_j, gsf_E1_one_j, color="black", alpha=0.2)
+
+  ax[0].set_title(r"$^{44}$Sc, $M1$")
+  ax[0].set_yscale("log")
+  ax[0].set_ylabel(r"GSF [MeV$^{-3}$]")
+  ax[0].plot([0], [0], color="black", alpha=0.2, label=r"Single $j_i$")  # Dummy for legend.
+  ax[0].legend(loc="lower left")
+
+  ax[1].set_title(r"$^{44}$Sc, $E1$")
+  ax[1].set_yscale("log")
+  ax[1].set_xlabel(r"$E_{\gamma}$ [MeV]")
+  ax[1].set_ylabel(r"GSF [MeV$^{-3}$]")
+  ax[1].plot([0], [0], color="black", alpha=0.2, label=r"Single $j$")  # Dummy for legend.
+  ax[1].legend(loc="lower left")
+  plt.show()
+  ```
+  For this one it is really nice that `kshell-utilities` saves the GSFs as `.npy` because you need like 18 of them to generate the plots. Run it once more and BAM! The plots show up instantly.
+
+  ##### The Porter-Thomas distribution
+
+  We can't mention gBA without mentioning the Porter-Thomas distribution. The following code will plot histogram of B values (reduced transition probabilities) from selections of Ei values (thanks to Jørgen Midtbø for creating the figure from which the following is heavily inspired from):
+
+  ```python
+  sc44.porter_thomas_Ei_plot(
+    Ei_range_min = EX_MIN,
+    Ei_range_max = EX_MAX,
+    Ei_values = np.linspace(EX_MIN, EX_MAX, 3),
+    Ei_bin_width = 0.2,
+    BXL_bin_width = 0.1,
+    multipole_type = "M1",
+  )
+  ```
+
+  [The docstring of this function](https://github.com/GaffaSnobb/kshell-utilities/blob/ab0d7f9b261692a412d50508c6c66349f7208862/kshell_utilities/kshell_utilities.py#L743) explains in detail what all the parameters are. A similar plot but analysed for total angular momentum instead of excitation energy can be created by:
+
+  ```
+  sc44.porter_thomas_j_plot(
+    Ex_max = EX_MAX,
+    Ex_min = EX_MIN,
+    j_lists = [[0, 1, 2], [3, 4, 5], [6, 7, 8]],
+  )
+  ```
+
+  and the parameters are described in [the docstring](https://github.com/GaffaSnobb/kshell-utilities/blob/ab0d7f9b261692a412d50508c6c66349f7208862/kshell_utilities/kshell_utilities.py#L1008).
   </p>
   </details>
   
