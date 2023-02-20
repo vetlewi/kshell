@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # 
 # (kshell_home_dir)/bin/kshell_ui.py 
 #    user interface to generate shell script.
