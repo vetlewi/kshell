@@ -117,19 +117,24 @@ contains
     if (n==0) return
     neig = n
     if (present(n_eig)) neig = min(n_eig, n)
-
     allocate( work((64+3)*n), x(n,n), iwork(max(1,5*n)), ifail(n) )
     x = a
     if (present(u)) then
        call dsyevx('V','I','U', n, x, n, 0.d0, 0.d0, 1, neig, &
             abstol, meig, e, u, n, work, size(work), iwork, ifail, ierr)
-       if (ierr/=0) stop "error dsyevx"
+       if (ierr/=0) then
+        write(*, *) ierr
+        stop " error dsyevx"
+       end if
        return
     else
        allocate( evec(n,n) )
        call dsyevx('N','I','U', n, x, n, 0.d0, 0.d0, 1, neig, &
             abstol, meig, e, evec, n, work, size(work), iwork, ifail, ierr)
-       if (ierr/=0) stop "error dsyevx"
+        if (ierr/=0) then
+          write(*, *) ierr
+          stop " error dsyevx"
+          end if
        return
     end if
 
