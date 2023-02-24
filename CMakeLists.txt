@@ -73,9 +73,12 @@ add_library(fakeintel SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/fakeintel.c)
 add_executable(kshell.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/kshell.F90)
 target_link_libraries(kshell.exe PRIVATE kshell fakeintel)
 if(UNIX AND NOT APPLE)
-    add_custom_command(TARGET kshell.exe POST_BUILD
-        COMMAND patchelf --add-needed libfakeintel.so kshell.exe
-        COMMENT "Patching kshell.exe with fake Intel symbol")
+    find_program(PATCHELF patchelf)
+    if ( PATCHELF )
+        add_custom_command(TARGET kshell.exe POST_BUILD
+            COMMAND ${PATCHELF} --add-needed libfakeintel.so kshell.exe
+            COMMENT "Patching kshell.exe with fake Intel symbol")
+    endif()
 endif()
 add_custom_command(TARGET kshell.exe POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:kshell.exe> ${CMAKE_CURRENT_LIST_DIR}/bin
