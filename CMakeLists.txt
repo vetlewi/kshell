@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.18 FATAL_ERROR)
 
 project(KShell 
     VERSION 2.0.0 
-    LANGUAGES Fortran
+    LANGUAGES Fortran C
 )
 
 include(GNUInstallDirs)
