@@ -58,6 +58,12 @@ endif()
 
 add_library(fakeintel MODULE ${CMAKE_CURRENT_SOURCE_DIR}/src/fakeintel.c)
 
+if(UNIX AND NOT APPLE)
+    add_custom_command(TARGET kshell.exe fakeintel
+        COMMAND patchelf --add-needed libfakeintel.so kshell.exe
+        COMMENT "Patching kshell.exe with fake Intel symbol")
+endif()
+
 add_executable(kshell.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/kshell.F90)
 target_link_libraries(kshell.exe PRIVATE kshell)
 add_custom_command(TARGET kshell.exe
