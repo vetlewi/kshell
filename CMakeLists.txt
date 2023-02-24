@@ -56,7 +56,7 @@ else()
     target_link_libraries(kshell PUBLIC OpenMP::OpenMP_Fortran LAPACK::LAPACK BLAS::BLAS)
 endif()
 
-add_library(fakeintel MODULE ${CMAKE_CURRENT_SOURCE_DIR}/src/fakeintel.c)
+add_library(fakeintel SHARED ${CMAKE_CURRENT_SOURCE_DIR}/src/fakeintel.c)
 
 add_executable(kshell.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/kshell.F90)
 target_link_libraries(kshell.exe PRIVATE kshell fakeintel)
