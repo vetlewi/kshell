@@ -11,7 +11,6 @@ include(GNUInstallDirs)
 option(BETZY "Build with flags ideal for Betzy" OFF)
 if ( CMAKE_Fortran_COMPILER_ID MATCHES "^Intel")
     set(BLA_VENDOR Intel10_64lp)
-    
 endif()
 
 
@@ -46,7 +45,10 @@ set(sources
 
 #---------- Define targets ----------#
 add_library(kshell ${sources})
-target_compile_options(kshell PRIVATE -fallow-argument-mismatch)
+
+if ( CMAKE_Fortran_COMPILER_ID MATCHES STREQUAL "GNU")
+    target_compile_options(kshell PRIVATE -fallow-argument-mismatch)
+endif()
 if( BETZY AND MPI_FOUND )
     target_compile_definitions(kshell PUBLIC MPI)
     target_link_libraries(kshell PUBLIC OpenMP::OpenMP_Fortran LAPACK::LAPACK BLAS::BLAS MPI::MPI_Fortran)
