@@ -157,17 +157,17 @@ program kshell
 
 #ifdef MPI
     is_mpi = .true.
-    #if defined (_OPENMP) && defined(SPARC) 
-        required = mpi_thread_serialized
-        write(*,*) "We use MPI"
-        call mpi_init_thread(required, provided, ierr)
-        write(*,*) "**** Called mpi_init_thread ****"
-        if (provided < required) write(*,*) "***** warning in mpi_init_thread *****"
-    #else
+    !#if defined (_OPENMP) && defined(SPARC) 
+    !    required = mpi_thread_serialized
+    !    write(*,*) "We use MPI"
+    !    call mpi_init_thread(required, provided, ierr)
+    !    write(*,*) "**** Called mpi_init_thread ****"
+    !    if (provided < required) write(*,*) "***** warning in mpi_init_thread *****"
+    !#else
         write(*,*) "We use MPI"
         call mpi_init(ierr)
         write(*,*) "**** Called mpi_init ****"
-    #endif 
+    !#endif 
     call mpi_comm_size(mpi_comm_world, nprocs, ierr)
     call mpi_comm_rank(mpi_comm_world, myrank, ierr)
     ! write(*,'(1a,1i5,1a,1i5 )') "nprocs",nprocs,"    myrank", myrank
