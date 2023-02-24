@@ -23,21 +23,21 @@ find_package(OpenMP REQUIRED)
 
 #---------- Define sources ----------#
 set(sources
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/constant.F90
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/model_space.F90
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/constant.f90
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/model_space.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/src/lib_matrix.F90
     ${CMAKE_CURRENT_SOURCE_DIR}/src/class_stopwatch.F90
     ${CMAKE_CURRENT_SOURCE_DIR}/src/partition.F90
     ${CMAKE_CURRENT_SOURCE_DIR}/src/wavefunction.F90
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/rotation_group.F90
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/harmonic_oscillator.F90
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/operator_jscheme.F90
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/operator_mscheme.F90
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/rotation_group.f90
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/harmonic_oscillator.f90
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/operator_jscheme.f90
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/operator_mscheme.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bridge_partitions.F90
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/sp_matrix_element.F90
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/interaction.F90
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/sp_matrix_element.f90
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/interaction.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bp_io.F90
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/lanczos.F90
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/lanczos.f90
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bp_expc_val.F90
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bp_block.F90
     ${CMAKE_CURRENT_SOURCE_DIR}/src/block_lanczos.F90
@@ -60,7 +60,7 @@ target_link_libraries(kshell.exe PRIVATE kshell)
 add_executable(transit.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/transit.F90)
 target_link_libraries(transit.exe PRIVATE kshell)
 
-add_executable(count_dim.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/count_dim.F90)
+add_executable(count_dim.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/count_dim.f90)
 target_link_libraries(count_dim.exe PRIVATE kshell)
 
 
