@@ -160,9 +160,11 @@ program kshell
     #if defined (_OPENMP) && defined(SPARC) 
         required = mpi_thread_serialized
         call mpi_init_thread(required, provided, ierr)
+        write(*,*) "**** Called mpi_init_thread ****"
         if (provided < required) write(*,*) "***** warning in mpi_init_thread *****"
     #else
         call mpi_init(ierr)
+        write(*,*) "**** Called mpi_init ****"
     #endif 
     call mpi_comm_size(mpi_comm_world, nprocs, ierr)
     call mpi_comm_rank(mpi_comm_world, myrank, ierr)
