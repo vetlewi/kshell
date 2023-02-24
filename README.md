@@ -217,7 +217,7 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   ```
   apt search openblas
   ```
-  and try a few different versions to see which one works. You check that the version is correct by compiling `KSHELL`. Instructions on this below.
+  and try a few different versions to see which one works. You check that the version is correct by compiling `KSHELL` and seeing whether the compile completes or not. Compilation instructions are following.
 
   #### Python
   For installing the correct version of Python, it is highly recommended to install an environment management system like `miniconda` as to not mess up any other Python dependencies your system has, and to easily download the exact version needed. Start by downloading the latest release of `miniconda` ([alternative downloads here](https://docs.conda.io/en/latest/miniconda.html)):
@@ -228,33 +228,33 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   ```
   bash Miniconda3-latest-Linux-x86_64.sh
   ```
-  Accept the ToS. Choose all default settings except when the installer asks if it should initialize by running conda init. Choose yes. If you have trouble with initializing conda, for example
+  Accept the terms of service. Choose all default settings except when the installer asks if it should initialize by running conda init. Choose yes. If you have trouble with initializing conda, for example
   ```
   > conda
   conda: command not found
   ```
-  cd to `<install_location>/anaconda3/bin` and initialize conda from there. If you for example use `fish` instead of `bash` (you should!), then initialize with
+  cd to `<install_location>/anaconda3/bin` and initialize conda from there (replace `<install_location>` with the path to where you downloaded the file `Miniconda3-latest-Linux-x86_64.sh`). If you for example use `fish` instead of `bash` (you should!), then initialize with
   ```
   ./conda init fish
   ```
-  When the initialization is complete, create an environment named `kshell` with `Python 3.8` along with `numpy` and `matplotlib`:
+  At this point, please close your terminal and open a new one. When the initialization is complete, create an environment named `kshell` with `Python 3.10` with:
   ```
-  conda create --name kshell python=3.8 numpy matplotlib
+  conda create --name kshell python=3.10
   ```
   Activate the environment with:
   ```
   conda activate kshell
   ```
-  Note that any additional Python package can be installed normally with `pip`. The `kshell` environment is only active within your terminal session and does not interfere with any other Python dependencies on your system.
+  Note that any additional Python packages may be installed normally with `pip`. You do not have to type `pip3` or `python3` because conda maps `pip` and `python` to the requested version of Python. The `kshell` environment is only active within your terminal session and does not interfere with any other Python dependencies on your system. This is one of the main reasons why I recommend using an environment manager. Should you at any time in the future need a different version of Python (newer or older), simply create a conda environment with the appropriate Python version. You can see the currently active conda environment in the bottom right or left corner of your terminal. The default environment is called `(base)` and if you have followed these instructions you will see that the active environment is `(kshell)`.
 
-  Alternatively, download `Python 3.8` with the Ubuntu packet manager.
+  As an alternative to using the forementioned conda approach, you can download `Python 3.10` with your distro's appropriate packet manager. Use `apt search python` to find the correct name of Python version 3.10 or newer.
 
   #### Compile KSHELL
   We are now ready to actually install `KSHELL`. Navigate to the directory where you want to install `KSHELL` and clone this repository:
   ```
   git clone https://github.com/GaffaSnobb/kshell.git
   ```
-  Navigate to the `src/` directory and edit the `Makefile` with your favorite editor. Change `FC = gfortran` to `FC = gfortran-10` (or `-11` if you installed version 11) and make sure that line is un-commented. All other `FC` declarations should be commented. Save the changes. Still in the `src/` directory, run
+  When the clone is successful use `ls` to see that you have a new directory called `kshell`. Navigate to the `kshell/src/` directory and edit the `Makefile` with your favorite editor. Change `FC = gfortran` to `FC = gfortran-10` (or `-11` if you installed version 11) and make sure that line is un-commented. All other `FC` declarations should be commented or deleted. Save the changes. Still in the `src/` directory, run
   ```
   make
   ```
@@ -318,8 +318,8 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
 
   </p>
   </details>
-
-  `KSHELL` is now compiled and ready to use. See a section further down in this readme for instructions on how to run `KSHELL`.
+  
+  If the output of your terminal is like the expected terminal output listed above then `KSHELL` is compiled correctly and ready to use. See a section further down in this readme for instructions on how to run `KSHELL`. If your terminal reports that the command `gfortran` cannot be found then you need to correctly edit your `Makefile` with `FC = <correct gfortran command>`. It might be `gfortran`, `gfortran-10`, `gfortran-11` or something similar.
 
   </p>
   </details>
@@ -331,7 +331,7 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   <p>
 
   #### Homebrew
-  `Homebrew` is a packet manager for macOS similar to `apt` for Ubuntu and frankly, every (soon to be) scientist using macOS should have `Homebrew` installed. Install with ([see detailed install instructions here](https://brew.sh)):
+  `Homebrew` is a packet manager for macOS similar to `apt` for Ubuntu and frankly, every scientist using macOS should have `Homebrew` installed. Install with ([or see detailed install instructions here](https://brew.sh)):
   ```
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   ```
@@ -341,51 +341,70 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   ```
   brew install gfortran
   ```
-  and check that the version is equal to or greater than 10.2.0 by:
+  and check that the version is equal to or greater than 10.2.0 by (version x.y.z with x > 10 should also be fine):
   ```
   gfortran --version
   ```
 
   #### Python
-  For installing the correct version of Python, it is highly recommended to install an environment management system like `miniconda` as to not mess up any other Python dependencies your system has, and to easily download the exact version needed. Start by downloading the latest release of `miniconda` ([alternative downloads here](https://docs.conda.io/en/latest/miniconda.html)):
+  For installing the correct version of Python, it is highly recommended to install an environment management system like `miniconda` as to not mess up any other Python dependencies your system has, and to easily download the exact version needed. Start by `cd`ing to your downloads directory with
+  ```
+  cd ~/Downloads
+  ```
+  and download the latest release of `miniconda` ([alternative downloads here](https://docs.conda.io/en/latest/miniconda.html)) by:
   ```
   wget https://repo.anaconda.com/miniconda/Miniconda3-latest-MacOSX-x86_64.sh
   ```
-  Run the installer:
+  Then, run the installer which you just downloaded with:
   ```
   bash Miniconda3-latest-MacOSX-x86_64.sh
   ```
-  Accept the ToS. Choose all default settings except when the installer asks if it should initialize by running conda init. Choose yes. Remember to close and re-open your terminal session for the conda installation to function properly. If you have trouble with initializing conda, for example
+  Follow the on-screen instructions and accept the terms of service. Choose all default settings except when the installer asks if it should initialize by running conda init. For that option select yes. After the installation is complete, close and re-open your terminal session for the conda installation to function properly. Check that conda has been installed by running the command `conda`. If a helpful description of conda shows up in your terminal then the installation is complete. However, if you see
   ```
   > conda
   conda: command not found
   ```
-  cd to `<install_location>/anaconda3/bin` and initialize conda from there. If you for example use `fish` instead of `bash` (you should!), then initialize with
+  then conda has not been installed properly. To fix this, `cd` to `<install_location>/anaconda3/bin` and initialize conda from there. Replace `<install_location>` with the path to where you downloaded the file `Miniconda3-latest-Linux-x86_64.sh` which should be `~/Downloads` if you followed these instructions. Then, initialise conda with:
   ```
-  ./conda init fish
+  ./conda init bash
   ```
-  When the initialization is complete, create an environment named `kshell` with `Python 3.8` along with `numpy` and `matplotlib`:
+  Replace `bash` if you are using a different shell, for example `zsh` or `fish` to mention a few. Close your terminal and open a new session, then run the command `conda` once more to see that the installation is proper. When the initialization is complete, create an environment named `kshell` with `Python 3.10`:
   ```
-  conda create --name kshell python=3.8 numpy matplotlib
+  conda create --name kshell python=3.10
   ```
   Activate the environment with:
   ```
   conda activate kshell
   ```
-  Note that any additional Python package can be installed normally with `pip`. The `kshell` environment is only active within your terminal session and does not interfere with any other Python dependencies on your system.
+  Note that any additional Python packages may be installed normally with `pip`. You do not have to type `pip3` or `python3` because conda maps `pip` and `python` to the requested version of Python. For example, to install `numpy`, simply run:
+  ```
+  pip install numpy
+  ```
+  The `kshell` environment is only active within your terminal session and does not interfere with any other Python dependencies on your system. You can see the currently active conda environment in the bottom right or left corner of your terminal. The default environment is called `(base)` and if you have followed these instructions you will see that the active environment is `(kshell)`. This is one of the main reasons why I recommend using an environment manager. You may mess around however much you like inside of any conda environment **other than** `base` without having to worry about a thing. Should you at any time in the future need a different version of Python (newer or older), simply create a conda environment with the appropriate Python version.
+  
+  You: I need Python 2.7 to run some old code. Lets open the good ole' terminal.
+  Apple: Tough luck. 2.7 is not included in newer versions of macOS.
+  You: But wait... I have conda!
+  ```
+  conda create --name <name of environment here> python=2.7
+  conda activate <name of environment here>
+  python --version
+  > Python 2.7.18
+  ```
+  You: Noice!
 
-  Alternatively, download `Python 3.8` with `brew`.
+  As an alternative to using the forementioned conda approach, you can download `Python 3.10` with `brew`. Use `brew search python` to find the correct name of Python version 3.10 or newer and then use `brew install <correct name>` to install it. Note that you may have to use `python3.10 myfile.py` to actually use version 3.10.
 
   #### Compile KSHELL
-  We are now ready to actually install `KSHELL`. Navigate to the directory where you want to install `KSHELL` and clone this repository:
+  We are now ready to actually compile (install) `KSHELL`. Navigate to the directory where you want to install `KSHELL`. This guide assumes that you use your home directory (`cd ~/`) but you may use another path if you'd like. Note that you do not need to create a directory called kshell (or whatever), because such a directory will be created during the installation. In your home directory, clone this repo with the command:
   ```
   git clone https://github.com/GaffaSnobb/kshell.git
   ```
-  Navigate to the `src/` directory and run
+  which copies all the needed files to your home inside a directory called `kshell`. `cd` to the `~/kshell/src/` directory and run the command
   ```
   make
   ```
-  to compile. The output should be something like this (mismatch warnings are normal):
+  to compile `KSHELL`. The output should be something like this (mismatch warnings are normal):
   
   <details>
   <summary>Click to see normal terminal output</summary>
@@ -446,8 +465,31 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   </p>
   </details>
 
-  `KSHELL` is now compiled and ready to use. See a section further down in this readme for instructions on how to run `KSHELL`.
-
+  If the output of your terminal is like the expected terminal output listed above then `KSHELL` is compiled correctly and is ready to use. See a section further down in this readme for instructions on how to run `KSHELL`. If your terminal reports that the command `gfortran` cannot be found then you need to correctly edit your `~/kshell/src/Makefile` with `FC = <correct gfortran command>`. It might be `gfortran`, `gfortran-10`, `gfortran-11` or something similar. To check, type the command directly into your terminal, hit enter, and see if your terminal can find the command:
+  ```
+  gfortran
+  > gfortran: command not found
+  ```
+  means that `gfortran` is not a valid command. However:
+  ```
+  gfortran-12
+  > gfortran-12: fatal error: no input files
+  > compilation terminated.
+  ```
+  allthough fatal, means that the command `gfortran-12` is a valid command. Edit the `~/kshell/src/Makefile` with `FC = gfortran-12` in this case.
+  
+  
+  Another possible problem is that your terminal reports this:
+  ```
+  ld: library not found for -llapack
+  collect2: error: ld returned 1 exit status
+  make: *** [kshell.exe] Error 1
+  ```
+  This means that `lapack` is either not installed or not in your `LIBRARY_PATH`. `brew install lapack` should solve this problem. Same for `openblas`. When you now try to compile `KSHELL` again, make sure to clean first:
+  ```
+  make clean
+  make
+  ```
   </p>
   </details>
 
@@ -459,38 +501,44 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   <summary>General usage</summary>
   <p>
 
-  We will here use 20Ne as an example. Create a directory where you want to place the output from `KSHELL`. cd to that directory and run
+  We will here use 20Ne as an example. Create a directory where you want to place the **results** from `KSHELL`. Note that this directory should be at a separate location from where you installed `KSHELL`. For example, create a directory in your home and enter the newly created directory:
   ```
-  python <kshell_install_directory>/bin/kshell_ui.py
+  cd ~/
+  mkdir -p kshell_results/ne20
+  cd kshell_results/ne20
   ```
-  You will now be asked whether you want to use `MPI` or not. `MPI` is used for parallelization over multiple nodes. The parallelization over several cores per CPU is administered by `OpenMP` and is active even though you do not choose `MPI` here. For a regular PC, choose `n`. For running on the Fram supercomputer, choose `fram`:
+  I use the name `ne20` and not `20ne` because some applications, like Python, do not support variable, function, etc. naming with numbers at the start, and I'm trying to be consise and consequent. Note that you now have an install directory: `~/kshell` and a result directory: `~/kshell_results` in your home. Be sure that you understand the difference between these two directories. The former is the location of the actual `KSHELL` program files, and the latter is the location where you wish to place the results from your `KSHELL` calculations. Don't mix these up. You woldn't place your Word documents inside the installation folder of Microsoft Office, would you? Now, inside the **results directory** for 20Ne `~/kshell_results/ne20`, initialise the `KSHELL` setup process by running the command:
+  ```
+  python ~/kshell/bin/kshell_ui.py
+  ```
+  This will start the preparations for your 20Ne calculation where you will be asked a series of questions. First, you'll be asked whether you want to use `MPI` (Message Parsing Interface) or not. `MPI` is used for parallelization over multiple nodes (computers) and is mainly applicable for running `KSHELL` on supercomputers. Parallelization over several cores per node is administered by `OpenMP` and is active even though you do not choose `MPI` here. For a regular PC, choose `n`:
   ```
   MPI parallel? Y/N/preset, n nodes (default: N,  TAB to complete) : n
   ```
-  You are now asked to choose the model space. 20Ne has 10 protons and 10 neutrons which makes the doubly magic 8p 8n core suitable for the inert core. 0d5/2, 1s1/2 and 0d3/2 will then be the model space where the valence nucleons can move about. This is the `USD` model space. Take a look at [this figure](https://periodic-table.org/wp-content/uploads/2019/05/Shell-model-of-nucleus.png) and see if you agree (note the different notation conventions, nlj and (n+1)lj (N = 2n + l)). We choose `usda.snt` for this input.
+  You are now asked to choose the model space you wish to use. 20Ne has 10 protons and 10 neutrons which makes the doubly magic 8p 8n core suitable for the inert core. 0d5/2, 1s1/2 and 0d3/2 will then be the model space where the valence nucleons can move about. This is the `USD` model space. Take a look at [this figure](https://periodic-table.org/wp-content/uploads/2019/05/Shell-model-of-nucleus.png) and see if you agree (note the different notation conventions, nlj and (n+1)lj (N = 2n + l)). We choose `usda.snt` for this example.
   ```
   model space and interaction file name (.snt)
   (e.g. w or w.snt,  TAB to complete) : usda.snt
   ```
-  Now we specify the nuclide. Here you may enter either the number of valence protons and neutrons or the isotope abbreviation (20ne or ne20). 20Ne has 2 valence protons and 2 valence neutrons outside the 8p 8n core, so the input may either be `2, 2` or `20ne`:
+  Now we specify the nuclide. Here you may enter either the number of valence protons and neutrons or the isotope abbreviation (20ne or ne20, upper or lower case does not matter). 20Ne has 2 valence protons and 2 valence neutrons outside the 8p 8n core, so the input may either be `2, 2` or `ne20`:
   ```
   number of valence protons and neutrons
-  (ex.  2, 3 <CR> or 9Be <CR>)    <CR> to quit : 2,2
+  (ex.  2, 3 <CR> or 9Be <CR>)    <CR> to quit : ne20
   ```
-  We are now prompted for the name of the executable shell script. Press the return key for the default name:
+  We are now prompted for the name of the executable shell script. Press the enter key for the default name:
   ```
   name for script file (default: Ne20_usda ):
   ```
-  Choose which spin states you want to calculate and how many. The default value is to calculate the 10 lowest lying states. See a section later in this document on details:
+  Choose which angular momentum levels you want to calculate and how many. The default value is to calculate the 10 lowest lying levels. See a section later in this document on how to choose specific angular momenta and parities. For this example we choose the default value (just press enter):
   ```
-  J, parity, number of lowest states
-    (ex. 10          for 10 +parity, 10 -parity states w/o J-proj. (default)
-        -5           for lowest five -parity states,
-        0+3, 2+1     for lowest three 0+ states and one 2+ states,
-        1.5-1, 3.5+3 for lowest one 3/2- states and three 7/2+ states
-        range        for a range of states) :
+  J, parity, number of lowest levels
+    (ex. 10          for 10 +parity, 10 -parity levels w/o J-proj. (default)
+        -5           for lowest five -parity levels,
+        0+3, 2+1     for lowest three 0+ levels and one 2+ levels,
+        1.5-1, 3.5+3 for lowest one 3/2- levels and three 7/2+ levels
+        range        for a range of levels) :
   ```
-  We are now asked for truncation information. The model space is small and the number of nucleos is low, so we dont need to truncate this system. The default is no truncation. 20Ne in the `USD` model space only allows positive parity states, so we are only asked for truncation of the positive parity states. See a section later in this document for truncation details:
+  We are now asked for truncation information. The model space is small and the number of nucleos is low, so we dont need to truncate this system. The default is no truncation. 20Ne in the `USD` model space only allows positive parity levels, so we are only asked for truncation of the positive parity levels. See a section later in this document for truncation details. Choose the default value of no truncation:
   ```
   truncation for "+" parity state in  Ne20_usda_p.ptn
   truncation scheme ?
@@ -502,10 +550,10 @@ Code downloaded from https://sites.google.com/alumni.tsukuba.ac.jp/kshell-nuclea
   ```
   At this point we are asked whether we want to edit any other parameters, like the proton and neutron effective charges, the gyroscopic spin factor and the number of Lanczos iterations. Change these to your needs (tab complete is supported). In this demo, we'll leave them to the default values:
   ```
-Modify parameters?
-Example: maxiter = 300 for parameter change or <CR> for no more modification.
-Available paramters are:
-['max_lanc_vec', 'maxiter', 'n_restart_vec', 'hw_type', 'mode_lv_hdd', 'n_block', 'eff_charge', 'gl', 'gs', 'beta_cm', 'fn_int', 'is_obtd', 'is_ry_sum', 'is_calc_tbme', 'sq', 'quench', 'is_tbtd']
+  Modify parameters?
+  Example: maxiter = 300 for parameter change or <CR> for no more modification.
+  Available paramters are:
+  ['max_lanc_vec', 'maxiter', 'n_restart_vec', 'hw_type', 'mode_lv_hdd', 'n_block', 'eff_charge', 'gl', 'gs', 'beta_cm', 'fn_int', 'is_obtd', 'is_ry_sum', 'is_calc_tbme', 'sq', 'quench', 'is_tbtd']
 
 
  --- set parameters ---
@@ -520,19 +568,19 @@ Available paramters are:
   n_block = 0
   n_restart_vec = 10
 
-:
+  :
   ```
-  The transition probabilities are calculated by default, but they can be omitted. Choose the default value:
+  The transition probabilities are calculated by default, but they can be omitted. For this example we want to calculate the transition probabilities, so please select `y`:
   ```
   compute transition probabilities (E2/M1/E1) for
-      Ne20_usda ? Y/N (default: Y) :
+      Ne20_usda ? Y/N (default: Y) : y
   ```
-  Now you may repeat the process and add parameters for another nuclide (per 2022-08-29 only one nuclide is supported at a time). Press return to skip this step. For the last step you are asked if you want to split the commands into separate shell scripts. This is handy for running very large calculations on supercomputers, but not for running smaller calculations on single PCs. We'll choose 'no': 
+  Now you may repeat the process and add parameters for another nuclide (per 2022-08-29 only one nuclide is supported at a time so the program will crash if you try to add an additional nuclide). Press enter to skip this step. For the last step you are asked if you want to split the commands into separate shell scripts. This is handy for running very large calculations on supercomputers, but not for running smaller calculations on single PCs. We'll choose `n`: 
   ```
-Split shell files? y/n (default: n): n
-Setup complete. Exiting...
+  Split shell files? y/n (default: n): n
+  Setup complete. Exiting...
   ```
-  The directory should now include these files:
+  At this point the preparations before running the actual calculations are complete. Your data directory `~/kshell_results/ne20` should now contain these files:
 
   ```
   Ne20_usda.sh
@@ -544,7 +592,7 @@ Setup complete. Exiting...
   transit.exe
   usda.snt
   ```
-  Run `KSHELL` with these parameters by:
+  See file descriptions later in this document if you want to know what they all do. Run your 20Ne `KSHELL` calculation by:
   ```
   ./Ne20_usda.sh
   ```
@@ -552,8 +600,9 @@ Setup complete. Exiting...
   ```
   start running log_Ne20_usda_m0p.txt ...
   start running log_Ne20_usda_tr_m0p_m0p.txt ...
-  Finish computing Ne20_usda.    See summary_Ne20_usda.txt
+  Finish computing Ne20_usda.
   ```
+  Congrats! You have just performed your first `KSHELL` calculation! To use these results, please se the *General usage* section later in this document.
 
   </p>
   </details>
@@ -566,15 +615,15 @@ Setup complete. Exiting...
   
   `kshell_ui.py` asks you to choose what spin and parity levels you want to calculate:
   ```
-  J, parity, number of lowest states
-    (ex. 100          for 100 +parity, 100 -parity states w/o J-proj. (default)
-        -5           for lowest five -parity states,
-        0+3, 2+1     for lowest three 0+ states and one 2+ states,
-        1.5-1, 3.5+3 for lowest one 3/2- states and three 7/2+ states)
-        range        for a range of states) :
+  J, parity, number of lowest levels
+    (ex. 100          for 100 +parity, 100 -parity levels w/o J-proj. (default)
+        -5           for lowest five -parity levels,
+        0+3, 2+1     for lowest three 0+ levels and one 2+ levels,
+        1.5-1, 3.5+3 for lowest one 3/2- levels and three 7/2+ levels)
+        range        for a range of levels) :
   ```
   * Entering an integer `N` will ask `KSHELL` to produce the `N` lowest lying energy levels, regardless of spin and parity. Example: Inputting `1337` will produce the 1337 lowest lying energy levels.
-  * Prepending a plus sign (`+`) or a minus sign (`-`) to the integer will specify which parity you want to calculate the levels for. Note that your chosen nuclide and model space might only be able to produce either positive or negative parity states. Example: `+1337` will produce the 1337 lowest lying positive parity levels.
+  * Prepending a plus sign (`+`) or a minus sign (`-`) to the integer will specify which parity you want to calculate the levels for. Note that your chosen nuclide and model space might only be able to produce either positive or negative parity levels. Example: `+1337` will produce the 1337 lowest lying positive parity levels.
   * You can request the `N` lowest lying levels of a specific spin and parity. Example: `0+3` will produce the three lowest lying levels with spin 0 and positive parity.
   * You can request several different specific spin and parity levels. Example: `1.5-1, 3.5+3` will produce the lowest lying level of spin 3/2 and negative parity, as well as the three lowest lying levels of spin 7/2 and positive parity.
   * The `range` functionality lets you easily select `N` levels for a range of different angular momenta. Any invalid choice will be filtered away, like choosing integer angular momenta for a nucleus of half integer angular momenta, or choosing a parity which the interaction does not support. In the following example we select 10 positive parity levels for angular momenta 0, 1, 2, and 3:
@@ -597,7 +646,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   <summary>How to calculate the dimensionality</summary>
   <p>
 
-  After answering all the questions from `kshell_ui.py` it might be reasonable to check the dimensionality of the configuration to see if your computer will actually manage to solve the calculations. At this point, the work folder will look something like this:
+  After answering all the questions from `kshell_ui.py` it might be reasonable to check the dimensionality of the configuration to see if your computer will actually manage to solve the calculations. At this point, the results directory will look something like this:
   ```
   Ne20_usda.sh
   Ne20_usda_p.ptn
@@ -843,70 +892,33 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   Ne20_usda.sh
   Ne20_usda_m0p.wav
   Ne20_usda_p.ptn
-  collect_logs.py
   count_dim.py
   kshell.exe
   log_Ne20_usda_m0p.txt
   log_Ne20_usda_tr_m0p_m0p.txt
   save_input_ui.txt
-  summary_Ne20_usda.txt
   transit.exe
   usda.snt
   ```
-  All the level and transition data are located in the summary file, `summary_Ne20_usda.txt`. Heres a selection of the summary:
-  
-  <details>
-  <summary>Click here for summary selection</summary>
-  <p>
-  
-  ```
-
-  Energy levels
-
-  N    J prty N_Jp    T     E(MeV)  Ex(MeV)  log-file
-
-  1   0.0 +     1   0.0    -40.467    0.000  log_Ne20_usda_m0p.txt 
-  2   2.0 +     1   0.0    -38.771    1.696  log_Ne20_usda_m0p.txt 
-  3   4.0 +     1   0.0    -36.376    4.091  log_Ne20_usda_m0p.txt 
-  4   0.0 +     2   0.0    -33.919    6.548  log_Ne20_usda_m0p.txt 
-  5   2.0 +     2   0.0    -32.882    7.585  log_Ne20_usda_m0p.txt
-  ...
-
-  B(E2)  ( > -0.0 W.u.)  mass = 20    1 W.u. = 3.2 e^2 fm^4
-                                            e^2 fm^4 (W.u.) 
-    J_i    Ex_i     J_f    Ex_f   dE        B(E2)->         B(E2)<- 
-  2.0+( 1)  1.696  0.0+( 1)  0.000  1.696     59.7( 18.5)    298.5( 92.5)
-  4.0+( 1)  4.091  2.0+( 1)  1.696  2.395     71.3( 22.1)    128.4( 39.8)
-  0.0+( 2)  6.548  2.0+( 1)  1.696  4.852     11.5(  3.6)      2.3(  0.7)
-  2.0+( 2)  7.585  0.0+( 1)  0.000  7.585      0.0(  0.0)      0.2(  0.0)
-  ...
-
-  B(M1)  ( > -0.0 W.u.)  mass = 20    1 W.u. = 1.8 mu_N^2  
-                                            mu_N^2   (W.u.) 
-    J_i    Ex_i     J_f    Ex_f   dE        B(M1)->         B(M1)<- 
-  2.0+( 2)  7.585  2.0+( 1)  1.696  5.889    0.000( 0.00)    0.000( 0.00)
-  2.0+( 3)  9.977  2.0+( 1)  1.696  8.281    0.482( 0.27)    0.482( 0.27)
-  2.0+( 3)  9.977  2.0+( 2)  7.585  2.392    1.104( 0.62)    1.104( 0.62)
-  4.0+( 2)  9.996  4.0+( 1)  4.091  5.905    0.001( 0.00)    0.001( 0.00)
-  ...
-  ```
-  
-  </p>
-  </details>
+  All the level data are located in `log_Ne20_usda_m0p.txt` and all the transition data are located in `log_Ne20_usda_tr_m0p_m0p.txt`.
 
   #### Load and view data from KSHELL
 
-  The summary file is easily read with the `kshell-utilities` package. See the docstrings in the [kshell-utilities repository](https://github.com/GaffaSnobb/kshell-utilities) for documentation. Install the package with `pip`:
+  The log files are easily read with the `kshell-utilities` package. See the docstrings in the [kshell-utilities repository](https://github.com/GaffaSnobb/kshell-utilities) for extended documentation. Install the package with `pip`:
   ```
   pip install kshell-utilities
   ```
-  To read a summary file:
+  Create a blank Python file with your favourite editor. Lets name it `ne20.py` and lets place it in the results directory of the 20Ne calculation which is `~/kshell_results/ne20` according to this guide. However, the use of `~/` as a shortcut to your home directory is not standard in Python and is discouraged to be used, so if you wish to specify the path to your home directory, use the actual path. For macOS: `/Users/<your username>/kshell_results/ne20`. For most Linux distros: `/home/<your username>/kshell_results/ne20`. We use the `loadtxt` function to read the results from `KSHELL`:
   ``` python
   import kshell_utilities as ksutil
 
-  ne20 = ksutil.loadtxt("summary_Ne20_usda.txt")[0]
+  def main():
+    ne20 = ksutil.loadtxt(path=".")
+
+  if __name__ == "__main__":
+    main()
   ```
-  `ne20` is an instance containing several useful attributes. To see the available attributes:
+  The use of a name guard (`if __name__ == "__main__":`) is required because `kshell-utilities` uses Python's `multiprocessing` module which requires this to function properly. Note that `path` is a period (`.`). This simply means that the `KSHELL` results are located in the same directory as the Python file `ne20.py`. If we do not place `ne20.py` in the same directory as the `KSHELL` results, then we need to specify either the relative path to the `KSHELL` results from `ne20.py` or the absolute path of the `KSHELL` results which is (macOS) `/Users/<your username>/kshell_results/ne20`. Back to the `loadtxt` function. `ne20` is an instance containing several useful attributes. To see the available attributes:
   ``` python
   > print(ne20.help)
   ['debug',
@@ -930,7 +942,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   'transitions_BM1',
   'truncation']
   ```
-  To see the energy, 2\*spin and parity of each level:
+  To see the energy, 2\*angular momentum and parity of each level:
   ``` python
   > print(ne20.levels)
   [[-40.467   0.      1.   ]
@@ -958,31 +970,35 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   ```
 
   #### Visualise data from KSHELL 
+  ##### Create a level density plot
 
   You can easily create a level density plot by
   ``` python
-  ne20.level_density_plot(bin_size=1)
+  ne20.level_density_plot()
   ```
-  or by
+  An alternative way is:
   ``` python
+  ground_state_energy: float = ne20.levels[0, 0]
   ksutil.level_density(
-      energy_levels = ne20.levels[:, 0],
-      bin_size = 1,
+      levels = ne20.levels[:, 0] - ground_state_energy,
+      bin_width = 0.2,
       plot = True
   )
   ```
-  or by
+  Note that scaling the excitation energies by the ground state energy is required with this method. If you want greater control of `matplotlib` plotting parameters, use this method:
   ``` python
   import matplotlib.pyplot as plt
-  
+
+  ground_state_energy: float = ne20.levels[0, 0]
   bins, density = ksutil.level_density(
-      energy_levels = ne20.levels[:, 0],
-      bin_size = 1
+      levels = ne20.levels[:, 0] - ground_state_energy,
+      bin_width = 0.2,
+      plot = False,
   )
   plt.step(bins, density)
   plt.show()
   ```
-  Choose an appropriate bin size. The two latter ways of generating the plot does not require that the data comes from `KSHELL`. Use any energy level data. The plot will look like this:
+  The `bin_width` is in the same energy units as your results, which for `KSHELL` is MeV. The two latter ways of generating the plot does not require that the data comes from `KSHELL`. Use any energy level data normalised to the ground state energy. The plot will look like this:
   
   <details>
   <summary>Click to see level density plot</summary>
@@ -992,6 +1008,8 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
 
   </p>
   </details>
+
+  ##### Create a level plot / level scheme
 
   To generate a level plot:
   ``` python
@@ -1018,10 +1036,10 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   </p>
   </details>
 
-  Both ways of generating the level plot supports selecting what spins to include in the plot, and how many levels per spin:
+  Both ways of generating the level plot supports selecting what total angular momenta to include in the plot, and how many levels per angular momentum. 
   ``` python
   ne20.level_plot(
-      max_spin_states = 3,
+      include_n_levels = 3,
       filter_spins = [0, 3, 5]
   )
   ```
@@ -1035,18 +1053,13 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   </p>
   </details>
 
-  The gamma strengh function (averaged over spins and parities) can easily be calculated by:
+  ##### Create a gamma strength function plot
+  
+  The gamma strengh function (averaged over total angular momenta and parities) can easily be calculated in several ways. The quickest way is
   ``` python
-    ne20.gsf(
-        bin_width = 0.2,
-        Ex_max = 5,
-        Ex_min = 20,
-        multipole_type = "M1",
-        plot = True,
-        save_plot = False
-    )
+    ne20.gsf()
   ```
-  or
+  which is an alias for the following function call:
   ``` python
     ne20.gamma_strength_function_average_plot(
         bin_width = 0.2,
@@ -1057,14 +1070,14 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
         save_plot = False
     )
   ```
-  or
+  The default parameters are applied if no function arguments are supplied. If you want to have greater control over the plotting procedure, then this solution is better:
   ``` python
     import matplotlib.pyplot as plt
     
     bins, gsf = ne20.gamma_strength_function_average_plot(
         bin_width = 0.2,
-        Ex_max = 5,
-        Ex_min = 20,
+        Ex_max = 50,
+        Ex_min = 5,
         multipole_type = "M1",
         plot = False,
         save_plot = False
@@ -1072,7 +1085,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
     plt.plot(bins, gsf)
     plt.show()
   ```
-  or
+  since you yourself have control over the `matplotlib` calls. Note that `Ex_max` is set to way higher energy than you get from the `KSHELL` calculations. Typical max energy from a `KSHELL` calculation is in the range `[8, 12]`MeV. The default upper limit is set large as to include all levels of any `KSHELL` calculation. The final way of doing it is:
   ``` python
   import matplotlib.pyplot as plt
 
@@ -1087,7 +1100,7 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   plt.plot(bins, gsf)
   plt.show()
   ```
-  where `bin_width`, `Ex_max` and `Ex_min` are in the same unit as the input energy levels, which from `KSHELL` is in MeV. `bin_width` is the width of the bins when the level density is calculated. `Ex_min` and `Ex_max` are the lower and upper limits for the excitation energy of the initial state of the transitions.
+  where the difference is that you supply the `levels` and `transitions` arrays. I'd not recommend this final solution unless you have level and transition data from some other place than `KSHELL`. The parameters `bin_width`, `Ex_max` and `Ex_min` are in the same unit as the input energy levels, which from `KSHELL` is in MeV. `bin_width` is the width of the bins when the level density is calculated. `Ex_min` and `Ex_max` are the lower and upper limits for the excitation energy of the initial state of the transitions.
 
   <details>
   <summary>Click to see gamma strength function plot</summary>
@@ -1098,6 +1111,342 @@ Chosen states: ['0+10', '1+10', '2+10', '3+10']
   </p>
   </details>
 
+  </p>
+  </details>
+
+  <details>
+  <summary>A more advanced example of using output from KSHELL</summary>
+  <p>
+
+  ##### Acquire some beefy 44Sc results
+
+  For these more advanced examples, we need beefier files than the previous 20Ne example. Lets use a scandium-44 calculation I performed for my master's thesis. Start by creating a new directory for the 44Sc results in your results directory:
+  ``` bash
+  cd ~/kshell_results
+  mkdir sc44
+  cd sc44
+  ```
+  Then, copy the three files `000_Sc44_GCLSTsdpfsdgix5pn_tr_j0p_j2p.sh`, `save_input_ui.txt`, and `summary_Sc44_GCLSTsdpfsdgix5pn_000.tgz` from [here](https://github.com/GaffaSnobb/master-tasks/tree/main/Sc44/sdpf-sdg/200_levels/3hw) to the `sc44` directory you just created. The `.tgz` file has a download button, but the `.sh` and `.txt` files you have to copy-paste. While in the directory `~/kshell_results/sc44`, create these files with your favourite editor, for example VSCode, by:
+  ``` bash
+  code save_input_ui.txt
+  code 000_Sc44_GCLSTsdpfsdgix5pn_tr_j0p_j2p.sh
+  ```
+  and copy-paste [the contents for the .sh file](https://github.com/GaffaSnobb/master-tasks/blob/main/Sc44/sdpf-sdg/200_levels/3hw/000_Sc44_GCLSTsdpfsdgix5pn_tr_j0p_j2p.sh) and [the contents for the .txt file](https://github.com/GaffaSnobb/master-tasks/blob/main/Sc44/sdpf-sdg/200_levels/3hw/save_input_ui.txt) to their respective files which you just created, and be sure to save the files.
+
+
+  The `.tgz` file contains the 44Sc results from `KSHELL`, but the file must be un-compressed before it can be used by `kshell-utilities`. Still in the `~/kshell_results/sc44` directory, run the command
+  ``` bash
+  tar -xzvf summary_Sc44_GCLSTsdpfsdgix5pn_000.tgz
+  ```
+  to un-compress the file. You now have another file, `summary_Sc44_GCLSTsdpfsdgix5pn_000.txt`, in the same directory! Great! We need to download one more file which you can find [here](https://github.com/GaffaSnobb/master-tasks/blob/main/Sc44/Sc44_gsf.txt) (it has a download button). This file contains the experimental gamma strength function of 44Sc. Please place it in the same directory, namely `~/kshell_results/sc44`.
+
+  ##### Load the 44Sc data into kshell-utilities
+
+  While in the directory `~/kshell_results/sc44`, create a Python script named `sc44.py` and read the newly un-compressed summary file by:
+  
+  ```python
+  import kshell_utilities as ksutil
+
+  def main():
+    sc44 = ksutil.loadtxt(
+      path = "summary_Sc44_GCLSTsdpfsdgix5pn_000.txt"
+    )
+
+  if __name__ == "__main__":
+      main()
+  ```
+  This summary file is quite large and will take 10-30 seconds to load. Your terminal should look like this when the process is done:
+
+  ```bash
+  > python sc44.py
+  Thread 0 loading Energy values...
+  Thread 1 loading B(E1) values...
+  Thread 2 loading B(M1) values...
+  Thread 3 loading B(E2) values...
+  Thread 0 finished loading Energy values in 0.03 s
+  Thread 2 finished loading B(M1) values in 6.43 s
+  Thread 1 finished loading B(E1) values in 6.61 s
+  Thread 3 finished loading B(E2) values in 10.51 s
+  ```
+  
+  Note that your `~/kshell_results/sc44` directory now has a new directory called `tmp`. This new directory contains the `KSHELL` data from the summary file stored as binary `numpy` arrays. If you run `sc44.py` again, you will se that the output is different and that the program uses 1-2 seconds instead of 10-30 seconds to run:
+  
+  ```bash
+  > python sc44.py
+  Summary data loaded from .npy! Use loadtxt parameter load_and_save_to_file = 'overwrite' to re-read data from the summary file.
+  ```
+
+  Instead of re-reading the data from the summary text file, `kshell-utilities` now loads the binary `numpy` arrays which is much faster. You may at any time delete the `tmp` directory without losing any data. The only downside is that the next time you run the program it will use some time reading the summary text file again. The reason to include the `save_input_ui.txt` and `000_Sc44_GCLSTsdpfsdgix5pn_tr_j0p_j2p.sh` files is because they contain specific information about the calculation parameters of the 44Sc calculations, like the number of levels per angular momentum-parity pair, the truncation, the interaction used, etc. `kshell-utilities` uses this information to generate unique identifiers for the contents of the `tmp` directory in case the `tmp` directory should contain data from several different 44Sc `KSHELL` calculations. Not strictly necessary for this example, but this is the intended way to use `kshell-utilities`.
+
+
+  ##### Take a look at the gamma strength function of 44Sc
+  Lets take a look at a properly calculated gamma strength function. For reference, this 44Sc calculation took a few days of calculation time on [Betzy, Norway's most powerful supercomputer](https://documentation.sigma2.no/hpc_machines/betzy.html). Extend your Python script to include the following:
+
+  ```python
+  import kshell_utilities as ksutil
+  import numpy as np
+  import matplotlib.pyplot as plt
+  ksutil.latex_plot()
+  ksutil.flags["debug"] = True
+
+  BIN_WIDTH = 0.2
+  EX_MIN = 5
+  EX_MAX = 9.699    # S(n).
+
+  def main():
+    fig, ax = plt.subplots()
+    N, Ex, gsf_experimental, gsf_std = np.loadtxt("Sc44_gsf.txt", skiprows=2, unpack=True)
+    ax.errorbar(Ex, gsf_experimental, yerr=gsf_std, fmt=".", capsize=1, elinewidth=0.5, label="Exp", color="black")
+    
+    sc44 = ksutil.loadtxt(
+      path = "summary_Sc44_GCLSTsdpfsdgix5pn_000.txt",
+    )
+    bins, gsf_M1 = sc44.gsf(
+      bin_width = BIN_WIDTH,
+      Ex_min = EX_MIN,
+      Ex_max = EX_MAX,
+      multipole_type = "M1",
+      plot = False
+    )
+    bins, gsf_E1 = sc44.gsf(
+      bin_width = BIN_WIDTH,
+      Ex_min = EX_MIN,
+      Ex_max = EX_MAX,
+      multipole_type = "E1",
+      plot = False
+    )
+    ax.step(bins, (gsf_M1 + gsf_E1), label=r"SM $E1 + M1$", color="grey")
+    ax.step(bins, gsf_M1, label=r"SM $M1$", color="red")
+    ax.step(bins, gsf_E1, label=r"SM $E1$", color="blue")
+
+    ax.set_yscale('log')
+    ax.set_xlabel(r"E$_{\gamma}$ [MeV]")
+    ax.set_ylabel(r"GSF [MeV$^{-3}$]")
+    ax.legend()
+    plt.show()
+  ```
+  The function call `ksutil.latex_plot()` makes your plots look nicer by making it "Latex style", whatever that means. Well, it actually means changing a few fonts and sizes, and you can see [the exact code here](https://github.com/GaffaSnobb/kshell-utilities/blob/ab0d7f9b261692a412d50508c6c66349f7208862/kshell_utilities/parameters.py#L11). It looks much prettier than default `matplotlib` and it fits right into your thesis. The line `ksutil.flags["debug"] = True` makes `kshell-utilities` be more verbose and can help you resolve issues. If you ever get tired of the terminal output you can set it to `False`.
+  
+  
+  
+  Run `sc44.py` again now and let it think for a few seconds. You should see a bunch of debug information like so:
+  
+  <details>
+  <summary>Click here to see a bunch of debug information</summary>
+  <p>
+
+  ```bash
+  > python sc44.py
+  Summary data loaded from .npy! Use loadtxt parameter load_and_save_to_file = 'overwrite' to re-read data from the summary file.
+  loadtxt_time = 0.1195173840096686 s
+  --------------------------------
+  transit_gsf_time = 0.770901508978568 s
+  level_density_gsf_time = 0.0019428109808359295 s
+  gsf_time = 0.0072257140127476305 s
+  avg_gsf_time = 8.191799861378968e-05 s
+  total_gsf_time = 0.7898409570043441 s
+  multipole_type = 'M1'
+  Skips: Transit: Energy range: 698614
+  Skips: Transit: Number of levels: 0
+  Skips: Transit: Parity: 0
+  Skips: Level density: Energy range: 2320
+  Skips: Level density: Number of levels: 0
+  Skips: Level density: Parity: 0
+  transit_total_skips = 698614
+  n_transitions = 898504
+  n_transitions_included = 199890
+  level_density_total_skips = 2320
+  n_levels = 3600
+  n_levels_included = 1280
+  --------------------------------
+  --------------------------------
+  transit_gsf_time = 0.44835006099310704 s
+  level_density_gsf_time = 0.0018729210132732987 s
+  gsf_time = 0.007104302989318967 s
+  avg_gsf_time = 7.715600077062845e-05 s
+  total_gsf_time = 0.4653512270015199 s
+  multipole_type = 'E1'
+  Skips: Transit: Energy range: 879173
+  Skips: Transit: Number of levels: 0
+  Skips: Transit: Parity: 0
+  Skips: Level density: Energy range: 2320
+  Skips: Level density: Number of levels: 0
+  Skips: Level density: Parity: 0
+  transit_total_skips = 879173
+  n_transitions = 958400
+  n_transitions_included = 79227
+  level_density_total_skips = 2320
+  n_levels = 3600
+  n_levels_included = 1280
+  --------------------------------
+  ```
+  </p>
+  </details>
+
+  and you'll se a nice GSF plot with both experimental values and `KSHELL` calculations. But, hold on... There is something strange about this plot...
+
+
+  BREAKING NEWS: Ola Nordmann (43) was SHOCKED when he discovered why there is such a big difference between the experimental data and the calculated GSF of 44Sc. [Read the full story here!](https://github.com/GaffaSnobb/master-tasks/blob/main/doc/masters_thesis_final.pdf)
+
+
+  Note that when you run `sc44.py` again it is much faster than the first run. If you peek inside the `tmp` directory you'll see that there are now additional files there. The GSF has been stored as binary `numpy` arrays and it does not have to be re-calculated during subsequent runs of the program. This means that you can make all your millions of tiny plot adjustments without waiting for a long time to show the changes. Neat, eh? Note also that if you change any of the parameters of the GSF, like `bin_width`, `Ex_min` and `Ex_max`, then `kshell-utilities` will understand that this is a different calculation from your previous one and it will perform new calculations and save these as binary `numpy` arrays too. These saved `.npy` GSF files only take up a few hundred bytes so don't worry about storing many different calculations (the saved `.npy` files of the transition calculations from `KSHELL` however can take several hundred megabytes but these are only generated once per `KSHELL` calculation).
+
+  ```
+  > python sc44.py
+  Summary data loaded from .npy! Use loadtxt parameter load_and_save_to_file = 'overwrite' to re-read data from the summary file.
+  loadtxt_time = 0.1136299180216156 s
+  Sc44 M1 GSF data loaded from .npy!
+  Sc44 E1 GSF data loaded from .npy!
+  ```
+
+  ##### Level density as a function of energy, angular momentum, and parity
+
+  Let's look at some other fancy stuff, shall we? When I made the following functionality my intentions were to study how the total angular momentum distribution looked like with regards to energy. The result however turned out to be a level density heatmap where the level density is plotted as a function of total angular momentum, energy, and parity. Still a nice result, but the name of the function is a bit off. Add this to your code and run it:
+
+  ```python
+  sc44.angular_momentum_distribution_plot(
+    bin_width = 1,
+    E_min = EX_MIN,
+    E_max = 15,
+    filter_parity = "+",
+    save_plot = False,
+    # j_list = [0, 2, 4, 7]
+  )
+  ```
+
+  You can specify a selection of total angular momenta with the `j_list` parameter. Note that `E_min` and `E_max` do not mean the exact same thing as `Ex_min` and `Ex_max`. 
+
+  ##### What effect does the number of levels have?
+  Have you ever lay awake at night, wondering about what the hell would happen if you changed the number of levels per angular momentum and per parity in your `KSHELL` calculations? Me too! Lets stop wondering:
+  
+  ```python
+  n_levels = [60, 100, 200]
+  colors = ["cyan", "dodgerblue", "blue"]
+  fig_0, ax_0 = plt.subplots()
+  fig_1, ax_1 = plt.subplots()
+
+  for levels, color in zip(n_levels, colors):
+    bins_gsf_E1, gsf_E1 = sc44.gsf(
+      bin_width = BIN_WIDTH,
+      Ex_min = EX_MIN,
+      Ex_max = EX_MAX,
+      multipole_type = "E1",
+      include_n_levels = levels,
+      plot = False
+    )
+    ax_0.step(bins_gsf_E1, gsf_E1, label=f"{levels} levels per " + r"$j^{\pi}$", color=color)
+
+    bins_nld, nld = sc44.nld(
+      bin_width = BIN_WIDTH,
+      include_n_levels = levels,
+      plot = False
+    )
+    ax_1.step(bins_nld, nld, label=f"{levels} levels per " + r"$j^{\pi}$", color=color)
+  
+  ax_0.set_yscale('log')
+  ax_0.set_xlabel(r"$E_{\gamma}$ [MeV]")
+  ax_0.set_ylabel(r"GSF [MeV$^{-3}$]")
+  ax_0.legend()
+
+  ax_1.set_xlabel(r"$E$ [MeV]")
+  ax_1.set_ylabel(r"NLD [MeV$^{-1}$]")
+  ax_1.legend()
+  plt.show()
+  ```
+
+  ##### A small generalised Brink-Axel test
+  This one is a real treat! Do you wonder if the gBA holds for your `KSHELL` calculations? This might shed some light on the matter:
+
+  ```python
+  fig, ax = plt.subplots(nrows=2, ncols=1, figsize=(6.4, 4.8*2))
+  j_list = [0, 1, 2, 3, 4, 5, 6, 7, 8]
+  n_j = len(j_list)
+
+  bins_M1_all_j, gsf_M1_all_j = sc44.gsf(
+    bin_width = BIN_WIDTH,
+    Ex_min = EX_MIN,
+    Ex_max = EX_MAX,
+    multipole_type = "M1",
+    plot = False,
+  )
+  bins_E1_all_j, gsf_E1_all_j = sc44.gsf(
+    bin_width = BIN_WIDTH,
+    Ex_min = EX_MIN,
+    Ex_max = EX_MAX,
+    multipole_type = "E1",
+    plot = False,
+  )
+  ax[0].plot(bins_M1_all_j, gsf_M1_all_j, color="black", label=r"All $j_i$")
+  ax[1].plot(bins_E1_all_j, gsf_E1_all_j, color="black", label=r"All $j_i$")
+
+  for i in range(n_j):
+    bins_M1_one_j, gsf_M1_one_j = sc44.gsf(
+      bin_width = BIN_WIDTH,
+      Ex_min = EX_MIN,
+      Ex_max = EX_MAX,
+      multipole_type = "M1",
+      partial_or_total = "partial",
+      filter_spins = [j_list[i]],
+      plot = False,
+    )
+    bins_E1_one_j, gsf_E1_one_j = sc44.gsf(
+      bin_width = BIN_WIDTH,
+      Ex_min = EX_MIN,
+      Ex_max = EX_MAX,
+      multipole_type = "E1",
+      partial_or_total = "partial",
+      filter_spins = [j_list[i]],
+      plot = False,
+    )
+    ax[0].plot(bins_M1_one_j, gsf_M1_one_j, color="black", alpha=0.2)
+    ax[1].plot(bins_E1_one_j, gsf_E1_one_j, color="black", alpha=0.2)
+
+  ax[0].set_title(r"$^{44}$Sc, $M1$")
+  ax[0].set_yscale("log")
+  ax[0].set_ylabel(r"GSF [MeV$^{-3}$]")
+  ax[0].plot([0], [0], color="black", alpha=0.2, label=r"Single $j_i$")  # Dummy for legend.
+  ax[0].legend(loc="lower left")
+
+  ax[1].set_title(r"$^{44}$Sc, $E1$")
+  ax[1].set_yscale("log")
+  ax[1].set_xlabel(r"$E_{\gamma}$ [MeV]")
+  ax[1].set_ylabel(r"GSF [MeV$^{-3}$]")
+  ax[1].plot([0], [0], color="black", alpha=0.2, label=r"Single $j$")  # Dummy for legend.
+  ax[1].legend(loc="lower left")
+  plt.show()
+  ```
+  For this one it is really nice that `kshell-utilities` saves the GSFs as `.npy` because you need like 18 of them to generate the plots. Run it once more and BAM! The plots show up instantly.
+
+  ##### The Porter-Thomas distribution
+
+  We can't mention gBA without mentioning the Porter-Thomas distribution. The following code will plot a histogram of B values (reduced transition probabilities) from selections of Ei values (thanks to Jørgen Midtbø for creating the figure from which the following is heavily inspired):
+
+  ```python
+  sc44.porter_thomas_Ei_plot(
+    Ei_range_min = EX_MIN,
+    Ei_range_max = EX_MAX,
+    Ei_values = np.linspace(EX_MIN, EX_MAX, 3),
+    Ei_bin_width = 0.2,
+    BXL_bin_width = 0.1,
+    multipole_type = "M1",
+  )
+  ```
+
+  [The docstring of this function](https://github.com/GaffaSnobb/kshell-utilities/blob/ab0d7f9b261692a412d50508c6c66349f7208862/kshell_utilities/kshell_utilities.py#L743) explains in detail what all the parameters are. A similar plot but analysed for total angular momentum instead of excitation energy can be created by:
+
+  ```python
+  sc44.porter_thomas_j_plot(
+    Ex_max = EX_MAX,
+    Ex_min = EX_MIN,
+    j_lists = [[0, 1, 2], [3, 4, 5], [6, 7, 8]],
+  )
+  ```
+
+  and the parameters are described in [the docstring](https://github.com/GaffaSnobb/kshell-utilities/blob/ab0d7f9b261692a412d50508c6c66349f7208862/kshell_utilities/kshell_utilities.py#L1008).
+
+
+  
+  If you wonder what all of this stuff might mean, check out [my masters thesis](https://github.com/GaffaSnobb/master-tasks/blob/main/doc/masters_thesis_final.pdf).
   </p>
   </details>
   

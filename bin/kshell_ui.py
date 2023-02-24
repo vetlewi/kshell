@@ -25,7 +25,7 @@ var_dict = {
     "beta_cm"       : 0.0, 
 }
 
-stgin_filenames  = [ 'kshell.exe', 'transit.exe', 'collect_logs.py', 'count_dim.py' ]
+stgin_filenames  = [ 'kshell.exe', 'transit.exe', 'count_dim.py' ]
 stgout_filenames = [ 'tmp_snapshot_*']
 
 base_filename_list = []   # If several nuclides are specified. NOTE: Might be possible to remove this from the global scope.
@@ -1122,8 +1122,7 @@ def main_nuclide(
 
     summary_filename = f"summary_{base_filename}.txt"
     stgout_filenames.append(summary_filename)
-    shell_file_content_single += f"./collect_logs.py log_*{base_filename}* > {summary_filename}\n"
-    shell_file_content_single += f'echo "Finish computing {base_filename}. See {summary_filename}"\necho\n\n'
+    shell_file_content_single += f'echo "Finished computing {base_filename}"\necho\n'
 
     return (
         base_filename,
@@ -1310,9 +1309,9 @@ def save_shell_script(
 
 def check_copy(*fnames):
     """
-    Copy needed files (typically 'kshell.exe', 'transit.exe',
-    'collect_logs.py') from <kshell_install_dir/bin> to the run
-    directory (the directory where this file is called from).
+    Copy needed files (typically 'kshell.exe', 'transit.exe') from
+    <kshell_install_dir/bin> to the run directory
+    (the directory where this file is called from).
 
     Print a warning message if the files do not exist and cannot be
     copied. This happens if the source files are not yet compiled.
@@ -1866,7 +1865,7 @@ def main():
         job_commands = job_schedulers.no_scheduler()
 
     shell_file_content_total = job_commands + shell_file_content_total
-    check_copy('kshell.exe', 'transit.exe', 'collect_logs.py', 'count_dim.py')
+    check_copy('kshell.exe', 'transit.exe', 'count_dim.py')
     
     shell_file_content_total = \
         check_j_scheme_dimensionality(
