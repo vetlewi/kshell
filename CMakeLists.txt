@@ -46,7 +46,7 @@ set(sources
 #---------- Define targets ----------#
 add_library(kshell ${sources})
 
-if ( CMAKE_Fortran_COMPILER_ID MATCHES STREQUAL "GNU")
+if ( CMAKE_Fortran_COMPILER_ID STREQUAL "GNU" )
     target_compile_options(kshell PRIVATE -fallow-argument-mismatch)
 endif()
 if( BETZY AND MPI_FOUND )
