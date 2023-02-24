@@ -58,15 +58,24 @@ endif()
 
 add_executable(kshell.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/kshell.F90)
 target_link_libraries(kshell.exe PRIVATE kshell)
+add_custom_command(TARGET kshell.exe
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:kshell.exe> ${CMAKE_CURRENT_LIST_DIR}/bin
+    COMMENT "Copied kshell.exe to bin dir"
+)
 
 add_executable(transit.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/transit.F90)
 target_link_libraries(transit.exe PRIVATE kshell)
+add_custom_command(TARGET transit.exe
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:transit.exe> ${CMAKE_CURRENT_LIST_DIR}/bin
+    COMMENT "Copied transit.exe to bin dir"
+)
 
 add_executable(count_dim.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/count_dim.f90)
 target_link_libraries(count_dim.exe PRIVATE kshell)
-
-
-INSTALL(TARGETS kshell.exe transit.exe count_dim.exe RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+add_custom_command(TARGET count_dim.exe
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:count_dim.exe> ${CMAKE_CURRENT_LIST_DIR}/bin
+    COMMENT "Copied count_dim.exe to bin dir"
+)
 
 
 
