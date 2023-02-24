@@ -9,6 +9,12 @@ project(KShell
 include(GNUInstallDirs)
 
 option(BETZY "Build with flags ideal for Betzy" OFF)
+if ( BETZY )
+    if ( CMAKE_Fortran_COMPILER_ID MATCHES "^Intel" )
+        set(CMAKE_Fortran_FLAGS_RELEASE "-O3 -march=core-avx2 -mtune=core-avx2" CACHE STRING "" FORCE)
+    endif()
+endif()
+
 if ( CMAKE_Fortran_COMPILER_ID MATCHES "^Intel")
     set(BLA_VENDOR Intel10_64lp)
 endif()
