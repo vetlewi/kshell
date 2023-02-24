@@ -58,29 +58,28 @@ endif()
 
 add_library(fakeintel MODULE ${CMAKE_CURRENT_SOURCE_DIR}/src/fakeintel.c)
 
+add_executable(kshell.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/kshell.F90)
+target_link_libraries(kshell.exe PRIVATE kshell fakeintel)
 if(UNIX AND NOT APPLE)
-    add_custom_command(TARGET kshell.exe fakeintel
+    add_custom_command(TARGET kshell.exe POST_BUILD
         COMMAND patchelf --add-needed libfakeintel.so kshell.exe
         COMMENT "Patching kshell.exe with fake Intel symbol")
 endif()
-
-add_executable(kshell.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/kshell.F90)
-target_link_libraries(kshell.exe PRIVATE kshell)
-add_custom_command(TARGET kshell.exe
+add_custom_command(TARGET kshell.exe POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:kshell.exe> ${CMAKE_CURRENT_LIST_DIR}/bin
     COMMENT "Copied kshell.exe to bin dir"
 )
 
 add_executable(transit.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/transit.F90)
 target_link_libraries(transit.exe PRIVATE kshell)
-add_custom_command(TARGET transit.exe
+add_custom_command(TARGET transit.exe POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:transit.exe> ${CMAKE_CURRENT_LIST_DIR}/bin
     COMMENT "Copied transit.exe to bin dir"
 )
 
 add_executable(count_dim.exe ${CMAKE_CURRENT_SOURCE_DIR}/src/count_dim.f90)
 target_link_libraries(count_dim.exe PRIVATE kshell)
-add_custom_command(TARGET count_dim.exe
+add_custom_command(TARGET count_dim.exe POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:count_dim.exe> ${CMAKE_CURRENT_LIST_DIR}/bin
     COMMENT "Copied count_dim.exe to bin dir"
 )
