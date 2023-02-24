@@ -159,10 +159,12 @@ program kshell
     is_mpi = .true.
     #if defined (_OPENMP) && defined(SPARC) 
         required = mpi_thread_serialized
+        write(*,*) "We use MPI"
         call mpi_init_thread(required, provided, ierr)
         write(*,*) "**** Called mpi_init_thread ****"
         if (provided < required) write(*,*) "***** warning in mpi_init_thread *****"
     #else
+        write(*,*) "We use MPI"
         call mpi_init(ierr)
         write(*,*) "**** Called mpi_init ****"
     #endif 
