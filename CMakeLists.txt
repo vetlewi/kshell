@@ -8,9 +8,14 @@ project(KShell
 
 include(GNUInstallDirs)
 
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif() 
+
 option(BETZY "Build with flags ideal for Betzy" OFF)
 if ( BETZY )
-    message(STATUS "This is Betzy")
+    message(STATUS "Building with Betzy optimized settings")
+
     if ( CMAKE_Fortran_COMPILER_ID MATCHES "^Intel" )
         set(CMAKE_Fortran_FLAGS_RELEASE "-O3 -march=core-avx2 -mtune=core-avx2" CACHE STRING "" FORCE)
     endif()
